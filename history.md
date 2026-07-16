@@ -4,7 +4,28 @@ Dokumen ini mencatat semua perubahan, pemecahan masalah, dan penyesuaian yang te
 
 ---
 
-## 16 Juli 2026
+## 16 Juli 2026 (Update 2)
+
+### 1. Kustomisasi Sidebar Menu & Penghapusan Pelamar List
+- Menata ulang urutan menu navigasi pada [LeftMenu.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/LeftMenu.jsx) menjadi: **Pansel Setting**, **Formasi**, **Pengumuman**, **Jadwal**, **Tahapan**, **Unduh** (menggantikan label *Berkas List*), dan **Account List**.
+- Menghapus menu **Pelamar List** dari panel navigasi sidebar.
+
+### 2. Integrasi & Perbaikan Halaman Formasi
+- Menulis ulang berkas [Main.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Formasi/Main.jsx) menggunakan layout header `.page-header` bergradasi biru, lengkap dengan badge kategori dan tombol **Tambah Formasi**.
+- Menulis ulang berkas [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Formasi/Table.jsx) agar mengambil data dari endpoint yang benar `/api/formasi` (bukan `/api/jadwal/active/` yang tersalin dari modul Jadwal), menampilkan kolom-kolom Formasi yang benar (**No, Order No, Nama Jabatan, Tugas & Fungsi, Status, Aksi**), dan membungkus tabel dalam class `.admin-table-container` agar seragam.
+- Menulis ulang berkas [Add.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Formasi/Add.jsx) dan [Edit.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Formasi/Edit.jsx) untuk mendukung form input field Formasi (`order_no`, `jabatan`, `tugas_fungsi`, `is_active`) dengan styling card `.admin-card` bergradasi dan tombol rounded.
+- Menulis ulang berkas [DeleteDialog.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Formasi/DeleteDialog.jsx) dan [Delete.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Formasi/Delete.jsx) untuk dialog hapus formasi dengan endpoint `DELETE /api/formasi/:uuid`.
+- Mendaftarkan subroute `/formasi/add` dan `/formasi/edit/:dataId` di [MenuRouting.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/MenuRouting.jsx).
+
+### 3. Penyelarasan Desain Halaman Lain (Pengumuman, Jadwal, Tahapan, Berkas/Unduh)
+- **Pengumuman**: Mengubah header [Main.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Pengumuman/Main.jsx) dengan template `.page-header` dan menambahkan class `.admin-table-container` pada [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Pengumuman/Table.jsx).
+- **Jadwal**: Mengubah header [Main.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Jadwal/Main.jsx) dengan template `.page-header` dan menambahkan class `.admin-table-container` pada [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Jadwal/Table.jsx).
+- **Tahapan**: Mengubah header [Main.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Tahapan/Main.jsx) dengan template `.page-header`.
+- **Unduh (Berkas)**: Mengubah header [Main.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Berkas/Main.jsx) dengan template `.page-header` (label "Unduh") dan menambahkan class `.admin-table-container` pada [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Berkas/Table.jsx).
+
+---
+
+## 16 Juli 2026 (Update 1)
 
 ### 1. Integrasi API & Perbaikan Data pada Menu Account List
 * **Masalah:** Halaman *Account List* (menu `/akun`) menampilkan pesan *"No data found"* karena format parsing respons API salah (`data.data` padahal respons dari server backend berupa array langsung) serta kolom-kolom tabel merujuk pada properti model pelamar yang salah (`fullname`, `nohp`, `is_activated`).
@@ -23,11 +44,3 @@ Dokumen ini mencatat semua perubahan, pemecahan masalah, dan penyesuaian yang te
 
 ### 3. Konfigurasi Routing
 * **Solusi:** Mendaftarkan path baru `akun/add` dan `akun/edit/:dataId` pada file routing utama admin ([MenuRouting.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/MenuRouting.jsx)) untuk menghubungkan navigasi form secara dinamis.
-
-### 4. Setup Git dan Sinkronisasi ke GitHub
-* **Masalah:** Repositori lokal belum diinisiasi sebagai repositori Git, dan ketika dihubungkan ke GitHub terjadi konflik *rejected (fetch first)* karena perbedaan riwayat commit.
-* **Solusi:**
-  - Membuat berkas `.gitignore` untuk menyaring file `node_modules` dan file rahasia `.env`.
-  - Melakukan inisialisasi git local (`git init`), menambahkan semua file (`git add .`), dan melakukan commit awal.
-  - Menyelesaikan pertentangan riwayat dengan menarik data remote menggunakan parameter `--allow-unrelated-histories` (`git pull origin main --allow-unrelated-histories`).
-  - Berhasil mengunggah (*push*) semua file ke repositori GitHub `https://github.com/MaulanaKhoer/pansel-big` pada branch `main`.

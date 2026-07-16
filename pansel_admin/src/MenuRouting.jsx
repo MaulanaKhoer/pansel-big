@@ -9,6 +9,8 @@ import BerkasPreview from './components/Content/Berkas/Preview';
 import Pansel from './components/Content/Pansel/Main';
 
 import Formasi from './components/Content/Formasi/Main';
+import FormasiAdd from './components/Content/Formasi/Add';
+import FormasiEdit from './components/Content/Formasi/Edit';
 import Kontak from './components/Content/Kontak/Main';
 import Tahapan from './components/Content/Tahapan/Main';
 
@@ -32,19 +34,6 @@ import AkunView from './components/Content/Akun/FinalisasiView';
 
 import {Switch, Route } from "react-router-dom";
 
-/*
- 
-
-            <Route path="/Formasi">
-                <Formasi />
-            </Route>
-            <Route path="/Kontak">
-                <Kontak />
-            </Route>
-
-          
-            
-            */
 export default function MenuRouting() {
     return (
         <Switch>
@@ -70,6 +59,15 @@ export default function MenuRouting() {
             </Route>
             <Route path="/akun">
                 <Akun />
+            </Route>
+            <Route path="/formasi/add">
+                <FormasiAdd />
+            </Route>
+            <Route path="/formasi/edit/:dataId">
+                <FormasiEdit />
+            </Route>
+            <Route path="/formasi">
+                <Formasi />
             </Route>
             <Route path="/pansel">
                 <Pansel />

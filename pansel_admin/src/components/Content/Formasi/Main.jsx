@@ -1,35 +1,41 @@
-
-
 import styled from "styled-components";
-
-import Edit from "./Edit";
-
-
+import Table from "./Table";
 import { AddCircle } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 
 export default function Main() {
     return (
       <Container>
-      <Title>Formasi</Title>
-      <Edit />
-    </Container>
+        <div className="page-header">
+          <div>
+            <div className="page-header-badge">📋 Content Management</div>
+            <h1 className="page-header-title">Formasi</h1>
+            <p className="page-header-subtitle">Kelola data formasi Jabatan Pimpinan Tinggi</p>
+          </div>
+          <div>
+            <Button 
+              variant="contained" 
+              startIcon={<AddCircle />} 
+              component="a" 
+              href="#/formasi/add"
+              style={{
+                borderRadius: '100px',
+                background: 'linear-gradient(135deg, var(--accent), var(--accent-light))',
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontWeight: 700,
+                textTransform: 'none',
+                boxShadow: '0 3px 12px rgba(200,146,42,0.25)'
+              }}
+            >
+              Tambah Formasi
+            </Button>
+          </div>
+        </div>
+        <Table />
+      </Container>
     )
 }
 
 const Container = styled.div`
   padding: 1em;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 20px;
-`;
-
-const Title = styled.h3`
-  font-size: 16px;
-  margin-top: 0px;
-  padding: 10px;
-  background-color: #dedede;
 `;

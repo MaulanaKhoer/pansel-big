@@ -193,7 +193,7 @@ export default function GazetteerTable() {
   */
   return (
     <>  
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} className="admin-table-container">
       <DeleteDialog open={open} setOpen={(e) => setOpen(e)} dataId={dataId} setRefresh={(e) => setRefresh(e)} />
       <Table stickyHeader sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>

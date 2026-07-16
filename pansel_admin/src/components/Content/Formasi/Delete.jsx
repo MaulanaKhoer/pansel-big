@@ -5,16 +5,11 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Backdrop from '@mui/material/Backdrop';
 
-
-import { useParams } from "react-router-dom";
 import { useState, useEffect } from 'react';
-
-import styled from "styled-components";
 import { ArrowBack, Delete } from '@mui/icons-material';
 
 import Config from '../../../config.json';
-import { getCookie , dateToString } from '../../../Helpers';
-
+import { getCookie } from '../../../Helpers';
 
 export default function DataDelete({ dataId, setOpenDialog, setRefresh }) {
 
@@ -23,24 +18,14 @@ export default function DataDelete({ dataId, setOpenDialog, setRefresh }) {
     const [success, setSuccess] = useState(false);
     const [message, setMessage] = useState("");
     const [open, setOpen] = useState(false);
-
-    const [status, setStatus] = useState("");
-    const [timeUploaded, setTimeUploaded] = useState("");
-    const [fileName, setFileName] = useState("");
     const [title, setTitle] = useState("");
 
     const token = getCookie('OPERATOR_TOKEN');
-    const public_id = getCookie('USER_PUBLIC_ID');
-
-    const url_get = Config.api_domain + "/berkas/id/" + dataId;
-    const url_delete = Config.api_domain + "/berkas/delete/";
-
+    const url_get = Config.api_domain + "/formasi/" + dataId;
+    const url_delete = Config.api_domain + "/formasi/" + dataId;
 
     useEffect(() => {
-
         try {
-            // Fetch data from REST API
-
             const requestOptions = {
                 method: 'GET',
                 headers: {
@@ -48,25 +33,15 @@ export default function DataDelete({ dataId, setOpenDialog, setRefresh }) {
                     'Authorization': token
                 }
             };
-
-
          
             fetch(url_get, requestOptions).then(res => res.json()).then(data => {
-                setStatus(data.status? 'Published': 'Not published');
-                setFileName(data.filename);
-                setTitle(data.title);
-                let dateISO = new Date(data.time_uploaded);
-                
-                let formatted_datetime = dateToString(dateISO);
-                setTimeUploaded(formatted_datetime);
+                setTitle(data.jabatan || "");
             });
-
 
         } catch (error) {
             alert(`Error ${error}`)
         }
     }, []);
-
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -75,9 +50,7 @@ export default function DataDelete({ dataId, setOpenDialog, setRefresh }) {
         setOpen(false);
     };
 
-
     const handleSubmit = (e) => {
-
         e.preventDefault();
 
         if (!loading) {
@@ -89,185 +62,115 @@ export default function DataDelete({ dataId, setOpenDialog, setRefresh }) {
     };
 
     function validateForm() {
-        return !loading && fileName.length > 0;
+        return !loading && title.length > 0;
     }
 
     const postData = async () => {
-
         try {
-
             const requestOptions = {
-                method: 'POST',
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token
-                },
-                body: JSON.stringify({
-                    "public_id": dataId,
-                })
+                }
             };
 
             const response = await fetch(url_delete, requestOptions)
-
             var json = await response.json();
             if (response.status === 200) {
-
-                if (json.status === 'success') {
-                    setSuccess(true);
-                    setLoading(false);
-                    setOpenBackdrop(false);
-                    setOpen(true);
-                    setMessage(json.message);
-                                       
-                    window.setTimeout(() => {
-                        //window.location.reload();
-                        setOpenDialog(false);
-                        setRefresh(true);
-                    }, 2000);
-                    
-                    //setAuth(true);
-                    //window.location.reload();
-                } else {
-                    setSuccess(false);
-                    setLoading(false);
-                    setOpenBackdrop(false);
-                    setOpen(true);
-                    //setAuth(false);
-                    setMessage(json.message);
-                }
+                setSuccess(true);
+                setLoading(false);
+                setOpenBackdrop(false);
+                setOpen(true);
+                setMessage(json.message || "Deleted successfully!");
+                                   
+                window.setTimeout(() => {
+                    setOpenDialog(false);
+                    setRefresh(true);
+                }, 2000);
             } else {
                 setSuccess(false);
                 setLoading(false);
                 setOpenBackdrop(false);
                 setOpen(true);
-                //setAuth(false);
-                setMessage(`Error ${response.status} ${response.statusText}`);
+                setMessage(json.message || `Error ${response.status} ${response.statusText}`);
             }
         } catch (error) {
             setSuccess(false);
             setLoading(false);
             setOpenBackdrop(false);
             setOpen(true);
-            //setAuth(false);
             setMessage(`Error ${error}`);
         }
     };
 
+    return (
+        <div style={{ padding: '24px' }}>
+            <form onSubmit={(e) => handleSubmit(e)}>
+                <div style={{ marginBottom: '16px' }}>
+                    <TextField 
+                        size="small" 
+                        fullWidth 
+                        label="Nama Jabatan" 
+                        variant="outlined" 
+                        value={title} 
+                        onChange={(e) => setTitle(e.target.value)} 
+                        disabled 
+                    />
+                </div>
+                <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '13.5px', color: 'var(--text-secondary)', marginBottom: '24px' }}>
+                    Apakah Anda yakin ingin menghapus formasi ini?
+                </p>
 
+                <div style={{ display: 'flex', gap: '12px' }}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<ArrowBack />}
+                        onClick={() => setOpenDialog(false)}
+                        size="medium"
+                        style={{
+                            borderRadius: '100px',
+                            textTransform: 'none',
+                            fontFamily: "'Plus Jakarta Sans', sans-serif",
+                            fontWeight: 600
+                        }}
+                    >
+                        Batal
+                    </Button>
 
-    return <Container>
-        <Wrapper>
-            <Form>
-                <form onSubmit={(e) => handleSubmit(e)}>
-                    <Top>
-                        <Left>
-                            <Input>
-                                <TextField size="small" fullWidth label="Berkas Title" color="secondary" value={title} onChange={(e) => setTitle(e.target.value)} disabled />
-                            </Input>
-                            <Input>
-                                <TextField size="small" fullWidth label="Berkas File" color="secondary" value={fileName} onChange={(e) => setFileName(e.target.value)} disabled />
-                            </Input>
-                            <Input>
-                                <TextField size="small" fullWidth label="Time Uploaded" color="secondary" value={timeUploaded} onChange={(e) => setTimeUploaded(e.target.value)} disabled />
-                            </Input>
-                            <Input>
-                                <TextField fullWidth id="name" label="Status" color="secondary" size="small" value={status} onChange={(e) => setStatus(e.target.value)} disabled />
-                            </Input>                         
-                          
+                    <Button
+                        variant="contained"
+                        color="error"
+                        startIcon={<Delete />}
+                        type="submit"
+                        disabled={!validateForm()}
+                        size="medium"
+                        style={{
+                            borderRadius: '100px',
+                            textTransform: 'none',
+                            fontFamily: "'Plus Jakarta Sans', sans-serif",
+                            fontWeight: 600
+                        }}
+                    >
+                        Hapus
+                    </Button>
+                </div>
+            </form>
 
-                          
-                        </Left>
-                    </Top>
-                    <span>
-                        Are you sure you want to delete this berkas?
-                    </span>
+            <Backdrop open={openBackdrop} sx={{ color: "#1976d2", backgroundColor: "rgba(255, 255, 255, 0.6)", zIndex: 100 }}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
 
-                    <Bottom >
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            startIcon={<ArrowBack />}
-                            onClick={() => setOpenDialog(false)}
-                            size="small"
-                            style={{ marginRight: '1em' }}
-                        >
-                            Cancel
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            startIcon={<Delete />}
-                            type="submit"
-                            disabled={!validateForm()}
-                            size="small"
-                        >
-                            Yes, Delete
-                        </Button>
-                    </Bottom>
-                </form>
-            </Form>
-
-        </Wrapper>
-        <Backdrop open={openBackdrop} sx={{ color: "#1976d2", backgroundColor: "rgba(255, 255, 255, 0.6)", zIndex: 100 }}>
-            <CircularProgress color="inherit" />
-        </Backdrop>
-
-        <Snackbar open={open} autoHideDuration={8000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-            {success ?
-                <Alert onClose={handleClose} severity="success">
-                    {message}
-                </Alert>
-                :
-                <Alert onClose={handleClose} severity="error">{message}</Alert>
-            }
-        </Snackbar>
-
-    </Container>;
+            <Snackbar open={open} autoHideDuration={8000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                {success ?
+                    <Alert onClose={handleClose} severity="success">
+                        {message}
+                    </Alert>
+                    :
+                    <Alert onClose={handleClose} severity="error">{message}</Alert>
+                }
+            </Snackbar>
+        </div>
+    );
 }
-
-const Container = styled.div`
-  padding: 1em;
-`;
-
-const Title = styled.h3`
-  font-size: 16px;
-  margin-top: 0px;
-  padding: 10px;
-  background-color: #dedede;
-`;
-
-const Wrapper = styled.div`
-    display: flex;
-`;
-
-const Form = styled.div`
-    display: flex;
-    flex-direction: column;
-    flex:1;
-`;
-const Top = styled.div`
-    display: flex;
-   
-`;
-const Left = styled.div`
-width: 100%;
-`;
-const Right = styled.div`
-    width: 50%;
-    padding: 15px;
-   
-`;
-
-const Input = styled.div`
-    margin-bottom: 1em;
-`;
-
-
-const Bottom = styled.div`
-    margin-top: 1em;
-`;
-
-const List = styled.div`
-    margin-top: 2em;
-`;

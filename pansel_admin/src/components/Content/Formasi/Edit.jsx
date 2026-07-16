@@ -1,25 +1,19 @@
-
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Backdrop from '@mui/material/Backdrop';
+import MenuItem from '@mui/material/MenuItem';
 
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from 'react';
-
-import styled from "styled-components";
-import { ArrowBack, Delete, Save } from '@mui/icons-material';
+import { ArrowBack, Save } from '@mui/icons-material';
 
 import Config from '../../../config.json';
 import { getCookie } from '../../../Helpers';
 
-import MenuItem from '@mui/material/MenuItem';
-
-//import FormTambah from "./FormTambah";
-
-export default function GazetteerDelete() {
+export default function FormasiEdit() {
 
     const [openBackdrop, setOpenBackdrop] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -27,27 +21,19 @@ export default function GazetteerDelete() {
     const [message, setMessage] = useState("");
     const [open, setOpen] = useState(false);
 
-    const [name, setName] = useState("");
-    const [featureType, setFeatureType] = useState("");
-    const [link, setLink] = useState("");
-    const [dataId, setDataId] = useState("");
-
-    const [country, setCountry] = useState("");
-    const [region, setRegion] = useState("");
-    const [latitude, setLatitude] = useState("");
-    const [longitude, setLongitude] = useState("");
+    const [orderNo, setOrderNo] = useState("");
+    const [jabatan, setJabatan] = useState("");
+    const [tugasFungsi, setTugasFungsi] = useState("");
+    const [isActive, setIsActive] = useState(true);
 
     const token = getCookie('OPERATOR_TOKEN');
+    let { dataId } = useParams();
 
-    const url_update = Config.api_domain + "/formasi/update/";
-    const url_get = Config.api_domain + "/formasi/active/";
-
+    const url_update = Config.api_domain + "/formasi/" + dataId;
+    const url_get = Config.api_domain + "/formasi/" + dataId;
 
     useEffect(() => {
-
         try {
-            // Fetch data from REST API
-
             const requestOptions = {
                 method: 'GET',
                 headers: {
@@ -55,15 +41,13 @@ export default function GazetteerDelete() {
                     'Authorization': token
                 }
             };
-            
-            fetch(url_get, requestOptions).then(res => res.json()).then(data => {
-                //console.log(data)
-                setName(data.data[0].konten);
-                setDataId(data.data[0].public_id);
 
-                //  if (data.status === "Expired token") {
+            fetch(url_get, requestOptions).then(res => res.json()).then(data => {
+                setOrderNo(data.order_no !== null ? String(data.order_no) : "");
+                setJabatan(data.jabatan || "");
+                setTugasFungsi(data.tugas_fungsi || "");
+                setIsActive(data.is_active !== false);
             });
-            
 
         } catch (error) {
             alert(`Error ${error}`)
@@ -78,7 +62,6 @@ export default function GazetteerDelete() {
     };
 
     const handleSubmit = (e) => {
-
         e.preventDefault();
 
         if (!loading) {
@@ -90,139 +73,158 @@ export default function GazetteerDelete() {
     };
 
     function validateForm() {
-        return !loading && name.length > 0;
+        return !loading && jabatan.length > 0;
     }
 
     const postData = async () => {
-
         try {
             const requestOptions = {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token
                 },
                 body: JSON.stringify({
-                    "konten": name,
-                    "public_id": dataId,
+                    order_no: orderNo ? parseInt(orderNo) : null,
+                    jabatan: jabatan,
+                    tugas_fungsi: tugasFungsi,
+                    is_active: isActive
                 })
             };
 
             const response = await fetch(url_update, requestOptions)
             var json = await response.json();
             if (response.status === 200) {
-
-                if (json.status === 'success') {
-                    setSuccess(true);
-                    setLoading(false);
-                    setOpenBackdrop(false);
-                    setOpen(true);
-                    setMessage(json.message);
-                    window.setTimeout(() => {
-                        window.location.href = "/pansel-management/#/formasi"
-                    }, 2000);
-                    //
-                    //setAuth(true);
-                    //window.location.reload();
-                } else {
-                    setSuccess(false);
-                    setLoading(false);
-                    setOpenBackdrop(false);
-                    setOpen(true);
-                    //setAuth(false);
-                    setMessage(json.message);
-                }
+                setSuccess(true);
+                setLoading(false);
+                setOpenBackdrop(false);
+                setOpen(true);
+                setMessage(json.message || "Updated successfully.");
+                window.setTimeout(() => {
+                    window.location.href = "/pansel-management/#/formasi"
+                }, 2000);
             } else {
                 setSuccess(false);
                 setLoading(false);
                 setOpenBackdrop(false);
                 setOpen(true);
-                //setAuth(false);
-                setMessage(`Error ${response.status} ${response.statusText}`);
+                setMessage(json.message || `Error ${response.status} ${response.statusText}`);
             }
         } catch (error) {
             setSuccess(false);
             setLoading(false);
             setOpenBackdrop(false);
             setOpen(true);
-            //setAuth(false);
             setMessage(`Error ${error}`);
         }
     };
 
-    return <Container>
-        <Wrapper>
-            <Form>
-                <form onSubmit={(e) => handleSubmit(e)}>
-                <TextField size="small" fullWidth label="Formasi Content" color="secondary"
-                                InputLabelProps={{ shrink: true }}
+    return (
+        <div style={{ padding: '1em' }}>
+            <div className="admin-card" style={{ maxWidth: '600px', margin: '0 auto', marginTop: '20px' }}>
+                <div className="admin-card-header" style={{ background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)', color: '#fff', padding: '18px 24px' }}>
+                    <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Ubah Formasi</h3>
+                </div>
+                <div style={{ padding: '24px' }}>
+                    <form onSubmit={(e) => handleSubmit(e)}>
+                        <div style={{ marginBottom: '16px' }}>
+                            <TextField 
+                                size="small" 
+                                fullWidth 
+                                label="Order No" 
+                                type="number"
+                                variant="outlined" 
+                                value={orderNo} 
+                                onChange={(e) => setOrderNo(e.target.value)} 
+                            />
+                        </div>
+                        <div style={{ marginBottom: '16px' }}>
+                            <TextField 
+                                size="small" 
+                                fullWidth 
+                                label="Nama Jabatan" 
+                                variant="outlined" 
+                                value={jabatan} 
+                                onChange={(e) => setJabatan(e.target.value)} 
+                                required 
+                            />
+                        </div>
+                        <div style={{ marginBottom: '16px' }}>
+                            <TextField 
+                                size="small" 
+                                fullWidth 
+                                label="Tugas & Fungsi" 
+                                variant="outlined" 
                                 multiline
-                                rows={19}
-                                value={name} onChange={(e) => setName(e.target.value)} />
+                                rows={4}
+                                value={tugasFungsi} 
+                                onChange={(e) => setTugasFungsi(e.target.value)} 
+                            />
+                        </div>
+                        <div style={{ marginBottom: '24px' }}>
+                            <TextField
+                                select
+                                size="small"
+                                fullWidth
+                                label="Status"
+                                value={isActive ? "true" : "false"}
+                                onChange={(e) => setIsActive(e.target.value === "true")}
+                            >
+                                <MenuItem value="true">Aktif</MenuItem>
+                                <MenuItem value="false">Tidak Aktif</MenuItem>
+                            </TextField>
+                        </div>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                startIcon={<ArrowBack />}
+                                onClick={() => window.history.back()}
+                                size="medium"
+                                style={{
+                                    borderRadius: '100px',
+                                    textTransform: 'none',
+                                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                                    fontWeight: 600
+                                }}
+                            >
+                                Batal
+                            </Button>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<Save />}
+                                type="submit"
+                                disabled={!validateForm()}
+                                size="medium"
+                                style={{
+                                    borderRadius: '100px',
+                                    textTransform: 'none',
+                                    background: validateForm() ? 'linear-gradient(135deg, var(--primary), var(--primary-light))' : undefined,
+                                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                                    fontWeight: 600
+                                }}
+                            >
+                                Update
+                            </Button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-                    <Bottom >
-                        
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            startIcon={<Save />}
-                            type="submit"
-                            disabled={!validateForm()}
-                            size="small"
-                        >
-                            Update
-                        </Button>
-                    </Bottom>
-                </form>
-            </Form>
+            <Backdrop open={openBackdrop} sx={{ color: "#1976d2", backgroundColor: "rgba(255, 255, 255, 0.6)", zIndex: 100 }}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
 
-        </Wrapper>
-        <Backdrop open={openBackdrop} sx={{ color: "#1976d2", backgroundColor: "rgba(255, 255, 255, 0.6)", zIndex: 100 }}>
-            <CircularProgress color="inherit" />
-        </Backdrop>
-
-        <Snackbar open={open} autoHideDuration={8000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-            {success ?
-                <Alert onClose={handleClose} severity="success">
-                    {message}
-                </Alert>
-                :
-                <Alert onClose={handleClose} severity="error">{message}</Alert>
-            }
-        </Snackbar>
-
-    </Container>;
+            <Snackbar open={open} autoHideDuration={8000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                {success ?
+                    <Alert onClose={handleClose} severity="success">
+                        {message}
+                    </Alert>
+                    :
+                    <Alert onClose={handleClose} severity="error">{message}</Alert>
+                }
+            </Snackbar>
+        </div>
+    );
 }
-
-const Container = styled.div`
-  padding: 0;
-`;
-
-const Title = styled.h3`
-  font-size: 16px;
-  margin-top: 0px;
-  padding: 10px;
-  background-color: #dedede;
-`;
-
-
-const Wrapper = styled.div`
-    display: "flex";
-`;
-
-const Form = styled.div`
-    flex: 1;
-`;
-
-const Input = styled.div`
-    margin-bottom: 1em;
-`;
-
-
-const Bottom = styled.div`
-    margin-top: 1em;
-`;
-
-const List = styled.div`
-    margin-top: 2em;
-`;

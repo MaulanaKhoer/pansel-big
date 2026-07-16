@@ -22,11 +22,11 @@ import { useLocation } from 'react-router-dom';
 
 const navItems = [
     { label: 'Pansel Setting', href: '#/pansel', icon: PublicIcon, path: '/pansel' },
+    { label: 'Formasi', href: '#/formasi', icon: GridViewIcon, path: '/formasi' },
+    { label: 'Pengumuman', href: '#/pengumuman', icon: ListAltIcon, path: '/pengumuman' },
+    { label: 'Jadwal', href: '#/jadwal', icon: EventIcon, path: '/jadwal' },
     { label: 'Tahapan', href: '#/tahapan', icon: ForumIcon, path: '/tahapan' },
-    { label: 'Jadwal List', href: '#/jadwal', icon: EventIcon, path: '/jadwal' },
-    { label: 'Berkas List', href: '#/berkas', icon: CollectionsBookmarkIcon, path: '/berkas' },
-    { label: 'Pengumuman List', href: '#/pengumuman', icon: ListAltIcon, path: '/pengumuman' },
-    { label: 'Pelamar List', href: '#/pelamar', icon: GroupIcon, path: '/pelamar' },
+    { label: 'Unduh', href: '#/berkas', icon: CollectionsBookmarkIcon, path: '/berkas' },
     { label: 'Account List', href: '#/akun', icon: PersonIcon, path: '/akun' },
 ];
 
