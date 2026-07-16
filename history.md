@@ -4,6 +4,62 @@ Dokumen ini mencatat semua perubahan, pemecahan masalah, dan penyesuaian yang te
 
 ---
 
+## 16 Juli 2026 (Update 9)
+
+### 1. Perbaikan Fitur Ubah & Hapus Pengumuman serta Penerapan View Inline PDF
+- **Perbaikan Rute Router Frontend:** Mendaftarkan path route `/pengumuman/edit/:dataId` ke dalam berkas router [MenuRouting.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/MenuRouting.jsx) agar halaman edit dapat diakses dan tidak langsung memantul kembali (*redirect*) ke halaman list.
+- **Perbaikan Hapus Pengumuman (Delete):** Memperbaiki [Delete.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Pengumuman/Delete.jsx) agar memanggil REST API menggunakan method `DELETE` pada endpoint `/api/pengumuman/:uuid` yang sesuai dengan arsitektur backend, menggantikan pemanggilan POST yang salah sebelumnya.
+- **Perbaikan Ubah Pengumuman (Edit):** Memperbaiki berkas [Edit.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Pengumuman/Edit.jsx) agar mengambil detail melalui `GET /api/pengumuman/:uuid` dan mengirimkan pembaruan data multipart melalui method `PUT` pada `/api/pengumuman/:uuid` (yang mendukung pembaruan file opsional).
+- **Fitur View PDF Inline:**
+  - Menambahkan endpoint `GET /api/pengumuman/view/:uuid` di backend ([pengumuman.routes.js](file:///d:/BIG/pansel/seleksi-jpt-new/api_pansel/app/routes/pengumuman.routes.js) dan [pengumuman.controller.js](file:///d:/BIG/pansel/seleksi-jpt-new/api_pansel/app/controllers/pengumuman.controller.js)) yang mengirimkan file PDF secara inline (`Content-Type: application/pdf`).
+  - Mengubah tombol unduh di [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Pengumuman/Table.jsx) menjadi tombol **Lihat** (menggunakan ikon `Preview` warna biru) yang membuka dokumen PDF secara inline di tab baru browser (`target="_blank"`).
+
+---
+
+## 16 Juli 2026 (Update 8)
+
+### 1. Penyelarasan Desain Form & Tabel Pengumuman di Admin Panel
+- **Penyelarasan Desain Form Tambah & Ubah:** Menulis ulang berkas [Add.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Pengumuman/Add.jsx) dan [Edit.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Pengumuman/Edit.jsx) untuk modul Pengumuman agar menggunakan wadah `.admin-card` dengan header gradasi biru primer, serta tombol aksi bulat (rounded) yang seragam.
+- **Penyelarasan Desain Tabel Pengumuman:**
+  - Menambahkan kolom **No** sebagai indeks baris tabel pada [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Pengumuman/Table.jsx).
+  - Mengubah penamaan header kolom menjadi Bahasa Indonesia: **No**, **Judul**, **Nama File**, **Tanggal Publikasi**, **Status**, dan **Aksi**.
+  - Mengubah kolom aksi untuk menampilkan ikon **Download** (warna primary), **Edit** (warna warning), dan **Hapus** (warna error) yang seragam dengan rancangan aksi pada modul Formasi.
+
+---
+
+## 16 Juli 2026 (Update 7)
+
+### 1. Perbaikan Endpoint dan Pemetaan Kolom Pengumuman di Admin Panel
+- Mengubah endpoint pengambilan data pada [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Pengumuman/Table.jsx) dari `/api/pengumuman/active/` ke `/api/pengumuman` agar admin dapat mengelola semua berkas pengumuman (aktif maupun tidak aktif).
+- Memperbaiki parsing data list respons array langsung dari backend agar tidak bernilai `undefined`.
+- Memperbaiki pemetaan kolom baris tabel (`uuid` -> `public_id`, `judul` -> `title`, `file_url` -> `filename`, `tanggal` -> `time_uploaded`, `is_active` -> `status`) yang sebelumnya merujuk pada nama field yang salah, sehingga tabel pengumuman kini dapat menampilkan data secara lengkap.
+
+---
+
+## 16 Juli 2026 (Update 6)
+
+### 1. Perbaikan MulterError: Unexpected field pada Pengunggahan File
+- Mengubah middleware `multer` pada rute pengumuman dari `upload.single('file')` menjadi `upload.any()` pada berkas [pengumuman.routes.js](file:///d:/BIG/pansel/seleksi-jpt-new/api_pansel/app/routes/pengumuman.routes.js). Hal ini memungkinkan penerimaan pengunggahan berkas secara fleksibel dengan nama field apa pun (misal, `'file'` dari antarmuka admin React, maupun `'file_url'` dari pengujian klien API Bruno).
+- Memperbarui berkas [pengumuman.controller.js](file:///d:/BIG/pansel/seleksi-jpt-new/api_pansel/app/controllers/pengumuman.controller.js) untuk membaca data berkas dari `req.files` (sebagai array) alih-alih `req.file` tunggal.
+
+---
+
+## 16 Juli 2026 (Update 5)
+
+### 1. Perbaikan Kestabilan API Backend (TypeError Guard)
+- Menambahkan pemeriksaan keamanan `!req.body` sebelum mengakses properti pada [formasi.controller.js](file:///d:/BIG/pansel/seleksi-jpt-new/api_pansel/app/controllers/formasi.controller.js) dan [pengumuman.controller.js](file:///d:/BIG/pansel/seleksi-jpt-new/api_pansel/app/controllers/pengumuman.controller.js). Hal ini mencegah backend melempar error `TypeError: Cannot read properties of undefined` dan menghentikan proses server (*server crash*) apabila ada permintaan HTTP yang dikirim dengan body kosong atau tanpa header `Content-Type: application/json`.
+
+---
+
+## 16 Juli 2026 (Update 4)
+
+### 1. Integrasi Formasi Dinamis pada Landing Page
+- Mengubah berkas [Formasi.js](file:///d:/BIG/pansel/seleksi-jpt-new/landing_page/src/components/Formasi.js) di repositori `landing_page` untuk mengambil data secara dinamis dari server backend menggunakan URL endpoint `Config.api_domain + "/formasi/active"`.
+- Menyesuaikan kolom deskripsi Tugas & Fungsi agar mem-parsing teks HTML yang dihasilkan editor WYSIWYG menggunakan `dangerouslySetInnerHTML`.
+- Mengubah berkas konfigurasi lokal `landing_page` [config.json](file:///d:/BIG/pansel/seleksi-jpt-new/landing_page/src/config.json) agar merujuk ke server API lokal (`http://localhost:8080/api`) guna memfasilitasi pengujian data secara langsung di lingkungan pengembangan (*local development*).
+
+---
+
 ## 16 Juli 2026 (Update 3)
 
 ### 1. Implementasi WYSIWYG Editor pada Formasi

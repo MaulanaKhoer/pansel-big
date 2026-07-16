@@ -1,4 +1,3 @@
-
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -6,45 +5,29 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Backdrop from '@mui/material/Backdrop';
 
-import { useState, useEffect } from 'react';
-import styled from "styled-components";
-import { ArrowBack, Save } from '@mui/icons-material';
+import { useState } from 'react';
+import { ArrowBack, Save, CloudUpload } from '@mui/icons-material';
 
 import Config from '../../../config.json';
 import { getCookie } from '../../../Helpers';
 
-import MenuItem from '@mui/material/MenuItem';
-import JSZip from 'jszip';
-
-import CSVReader from "react-csv-reader";
-//import FormTambah from "./FormTambah";
-
-export default function DataAdd() {
+export default function PengumumanAdd() {
 
     const [openBackdrop, setOpenBackdrop] = useState(false);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [message, setMessage] = useState("");
     const [open, setOpen] = useState(false);
-    const [valid, setValid] = useState(false);
 
-    const [idPublic, setIdPublic] = useState(0);
-    const [featureName, setFeatureName] = useState("");
+    const [title, setTitle] = useState("");
     const [notes, setNotes] = useState("");
-
-    const [selectedFile, setSelectedFile] = useState();
-    const [title, setTitle] = useState();
-    const [shapeFile, setShapeFile] = useState();
-    const [fileName, setFileName] = useState();
-    const [url, setUrl] = useState('Automatically generated from geoserver response');
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [fileName, setFileName] = useState("");
 
     const token = getCookie('OPERATOR_TOKEN');
-    const public_id = getCookie('USER_PUBLIC_ID');
     const contributor = getCookie('OPERATOR');
 
     const url_upload = Config.api_domain + "/pengumuman/";
-
-
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -54,7 +37,6 @@ export default function DataAdd() {
     };
 
     const handleSubmit = (e) => {
-
         e.preventDefault();
 
         if (!loading) {
@@ -65,44 +47,26 @@ export default function DataAdd() {
         }
     };
 
-
     function validateForm() {
-        return !loading && selectedFile && selectedFile.length > 0;
+        return !loading && title.length > 0 && selectedFile;
     }
 
     function onFileChange(event) {
-
-        // Update the state
         if (event.target.files.length > 0) {
-            setSelectedFile(event.target.files)
-            setFileName(event.target.files[0].name)
-
-            //var filesInput = event.target.files[0];
-            //var list = document.getElementById("list");
+            setSelectedFile(event.target.files[0]);
+            setFileName(event.target.files[0].name);
         }
     }
 
     const postData = async () => {
-
         try {
-
-            var dataFile = document.getElementById('dataFile'); //document.querySelector("#proposalFile");
-
             const formData = new FormData();
-            formData.append('file', dataFile?.files[0]);
+            formData.append('file', selectedFile);
             formData.append("username", contributor);
             formData.append("title", title);
+            formData.append("notes", notes);
+            formData.append("is_active", "true");
 
-            /*
-             
-                JSON.stringify({
-                    "public_id": public_id,
-                    "feature_name": featureName,
-                    "notes": notes,
-                    'is_public': idPublic === 1 ? true : false,
-                    'filename': fileName
-                })
-            */
             const requestOptions = {
                 method: 'POST',
                 headers: {
@@ -111,176 +75,164 @@ export default function DataAdd() {
                 body: formData
             };
 
-            const response = await fetch(url_upload, requestOptions)
+            const response = await fetch(url_upload, requestOptions);
             var json = await response.json();
 
-
-            if (json.status === 'success') {
+            if (json.status === 'success' || response.status === 201 || response.status === 200) {
                 setSuccess(true);
                 setLoading(false);
                 setOpenBackdrop(false);
                 setOpen(true);
-                setMessage(json.message);
+                setMessage(json.message || "Pengumuman created successfully!");
 
                 window.setTimeout(() => {
                     window.location.href = "/pansel-management/#/pengumuman"
                 }, 2000);
-                //setAuth(true);
-                //window.location.reload();
             } else {
                 setSuccess(false);
                 setLoading(false);
                 setOpenBackdrop(false);
                 setOpen(true);
-                //setAuth(false);
-                setMessage(json.message);
+                setMessage(json.message || `Error ${response.status} ${response.statusText}`);
             }
-
         } catch (error) {
             setSuccess(false);
             setLoading(false);
             setOpenBackdrop(false);
             setOpen(true);
-            //setAuth(false);
             setMessage(`Error ${error}`);
         }
     };
 
-
-    /*
-
-      <Input>
-                        <TextField type="date" size="small" id="title" label="Date" color="secondary"  InputLabelProps={{
-                                shrink: true,
-                        }} />
-                    </Input>
-
-                    */
-
-    return <Container>
-        <Title>Add New Pengumuman</Title>
-        <Wrapper>
-            <Form>
-                <form onSubmit={(e) => handleSubmit(e)}>
-                    <Top>
-                        <Left>
-                            
-                            <Input>
-                                <TextField size="small" fullWidth label="Title" color="secondary" value={title} onChange={(e) => setTitle(e.target.value)} />
-                            </Input>
-                            <Input>
-                                <label htmlFor="file">Upload Pengumuman</label>
-                            </Input>
+    return (
+        <div style={{ padding: '1em' }}>
+            <div className="admin-card" style={{ maxWidth: '600px', margin: '0 auto', marginTop: '20px' }}>
+                <div className="admin-card-header" style={{ background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)', color: '#fff', padding: '18px 24px' }}>
+                    <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Tambah Pengumuman Baru</h3>
+                </div>
+                <div style={{ padding: '24px' }}>
+                    <form onSubmit={(e) => handleSubmit(e)}>
+                        <div style={{ marginBottom: '16px' }}>
+                            <TextField 
+                                size="small" 
+                                fullWidth 
+                                label="Judul Pengumuman" 
+                                variant="outlined" 
+                                value={title} 
+                                onChange={(e) => setTitle(e.target.value)} 
+                                required 
+                            />
+                        </div>
+                        <div style={{ marginBottom: '16px' }}>
+                            <TextField 
+                                size="small" 
+                                fullWidth 
+                                label="Keterangan / Konten" 
+                                variant="outlined" 
+                                multiline
+                                rows={3}
+                                value={notes} 
+                                onChange={(e) => setNotes(e.target.value)} 
+                            />
+                        </div>
+                        <div style={{ marginBottom: '24px' }}>
+                            <label style={{ 
+                                display: 'block', 
+                                fontFamily: "'Plus Jakarta Sans', sans-serif", 
+                                fontSize: '13px', 
+                                fontWeight: 600, 
+                                color: 'var(--text-secondary)', 
+                                marginBottom: '8px' 
+                            }}>
+                                Dokumen Pengumuman (PDF) *
+                            </label>
                             <label htmlFor="dataFile">
                                 <input
                                     id="dataFile"
                                     name="btn-upload"
                                     style={{ display: 'none' }}
                                     type="file"
+                                    accept=".pdf"
                                     onChange={(e) => onFileChange(e)}
                                 />
                                 <Button
-                                    className="btn-choose"
                                     variant="outlined"
-                                    component="span" size="small" >
-                                    Choose Files
+                                    color="primary"
+                                    component="span"
+                                    startIcon={<CloudUpload />}
+                                    style={{
+                                        borderRadius: '8px',
+                                        textTransform: 'none',
+                                        fontFamily: "'Plus Jakarta Sans', sans-serif",
+                                        fontWeight: 600
+                                    }}
+                                >
+                                    Pilih Berkas PDF
                                 </Button>
                             </label>
+                            {fileName && (
+                                <div style={{ 
+                                    marginTop: '8px', 
+                                    fontFamily: "'Plus Jakarta Sans', sans-serif", 
+                                    fontSize: '13px', 
+                                    color: 'var(--primary)',
+                                    fontWeight: 500
+                                }}>
+                                    📎 {fileName}
+                                </div>
+                            )}
+                        </div>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                startIcon={<ArrowBack />}
+                                onClick={() => window.history.back()}
+                                size="medium"
+                                style={{
+                                    borderRadius: '100px',
+                                    textTransform: 'none',
+                                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                                    fontWeight: 600
+                                }}
+                            >
+                                Batal
+                            </Button>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<Save />}
+                                type="submit"
+                                disabled={!validateForm()}
+                                size="medium"
+                                style={{
+                                    borderRadius: '100px',
+                                    textTransform: 'none',
+                                    background: validateForm() ? 'linear-gradient(135deg, var(--primary), var(--primary-light))' : undefined,
+                                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                                    fontWeight: 600
+                                }}
+                            >
+                                Simpan
+                            </Button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-                            <div className="file-name">
-                                {selectedFile && selectedFile.length > 0 ? selectedFile[0].name : null}
-                            </div>
-                        </Left>
-                        <Right>
+            <Backdrop open={openBackdrop} sx={{ color: "#1976d2", backgroundColor: "rgba(255, 255, 255, 0.6)", zIndex: 100 }}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
 
-                        </Right>
-                    </Top>
-
-                    <Bottom >
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            startIcon={<ArrowBack />}
-                            onClick={() => window.history.back()}
-                            size="small"
-                            style={{ marginRight: '1em' }}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            startIcon={<Save />}
-                            type="submit"
-                            disabled={!validateForm()}
-                            size="small"
-                        >
-                            Submit
-                        </Button>
-                    </Bottom>
-                </form>
-            </Form>
-
-        </Wrapper>
-        <Backdrop open={openBackdrop} sx={{ color: "#1976d2", backgroundColor: "rgba(255, 255, 255, 0.6)", zIndex: 100 }}>
-            <CircularProgress color="inherit" />
-        </Backdrop>
-
-        <Snackbar open={open} autoHideDuration={8000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-            {success ?
-                <Alert onClose={handleClose} severity="success">
-                    {message}
-                </Alert>
-                :
-                <Alert onClose={handleClose} severity="error">{message}</Alert>
-            }
-        </Snackbar>
-
-    </Container>;
+            <Snackbar open={open} autoHideDuration={8000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                {success ?
+                    <Alert onClose={handleClose} severity="success">
+                        {message}
+                    </Alert>
+                    :
+                    <Alert onClose={handleClose} severity="error">{message}</Alert>
+                }
+            </Snackbar>
+        </div>
+    );
 }
-
-const Container = styled.div`
-  padding: 1em;
-`;
-
-const Title = styled.h3`
-  font-size: 16px;
-  margin-top: 0px;
-  padding: 10px;
-  background-color: #dedede;
-`;
-
-
-const Wrapper = styled.div`
-    display: "flex";
-`;
-
-const Form = styled.div`
-    flex: 1;
-`;
-
-const Top = styled.div`
-    display: flex;
-   
-`;
-const Left = styled.div`
-    width: 40%;
-`;
-const Right = styled.div`
-    width: 50%;
-    padding: 0px 15px 15px 15px;
-`;
-
-const Input = styled.div`
-    margin-bottom: 1em;
-`;
-
-
-const Bottom = styled.div`
-    margin-top: 1em;
-`;
-
-const List = styled.div`
-    margin-top: 2em;
-    font-size: 12px;
-`;

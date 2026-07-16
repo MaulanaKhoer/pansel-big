@@ -12,8 +12,8 @@ module.exports = function(app) {
 
   // Public routes (GET without token)
   app.get("/api/tahapan", controller.findAll);
-  app.get("/api/tahapan/:uuid", controller.findOne);
   app.get("/api/tahapan/active", controller.findAllActive);
+  app.get("/api/tahapan/:uuid", controller.findOne);
 
   // Protected routes (POST/PUT/DELETE with token)
   app.post("/api/tahapan", [authJwt.verifyToken], controller.create);

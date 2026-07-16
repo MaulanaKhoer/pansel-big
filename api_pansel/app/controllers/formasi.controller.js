@@ -2,7 +2,7 @@ const db = require("../models");
 const Formasi = db.formasi;
 
 exports.create = (req, res) => {
-  if (!req.body.jabatan) {
+  if (!req.body || !req.body.jabatan) {
     res.status(400).send({
       message: "Content can not be empty!"
     });

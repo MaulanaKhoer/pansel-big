@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,6 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import Config from "../config.json";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -41,6 +43,18 @@ const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 function Formasi() {
+  const [list, setList] = useState(null);
+  const URL_LIST = Config.api_domain + "/formasi/active";
+
+  useEffect(() => {
+    fetch(URL_LIST, { method: "GET", headers: { "Content-Type": "application/json" } })
+      .then((res) => res.json())
+      .then((data) => {
+        const dataList = Array.isArray(data) ? data : (data.data || []);
+        setList(dataList);
+      })
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <div style={{ background: "#f4f6fb", minHeight: "75vh", paddingBottom: "48px" }}>
@@ -98,33 +112,27 @@ function Formasi() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {[
-                  { 
-                    no: 1, 
-                    jabatan: "Kepala BIG", 
-                    tugas: (
-                      <div>
-                        Kepala BIG mempunyai tugas memimpin BIG dalam menjalankan tugas dan fungsi BIG. Fungsi Kepala BIG adalah:
-                        <ol style={{ paddingLeft: "20px", marginTop: "8px", marginBottom: 0 }}>
-                          <li>perumusan, penetapan, dan pengendalian kebijakan teknis di bidang informasi geospasial;</li>
-                          <li>pelaksanaan kebijakan teknis di bidang informasi geospasial;</li>
-                          <li>penyusunan norma, standar, prosedur, dan kriteria di bidang informasi geospasial;</li>
-                          <li>pemberian bimbingan teknis dan supervisi di bidang informasi geospasial;</li>
-                          <li>pengelolaan barang milik/kekayaan negara yang menjadi tanggung jawab BIG;</li>
-                          <li>koordinasi pelaksanaan tugas, pembinaan, dan pemberian dukungan administrasi kepada seluruh unsur organisasi di lingkungan BIG;</li>
-                          <li>pelaksanaan dukungan yang bersifat substantif kepada seluruh unsur organisasi di lingkungan BIG; dan</li>
-                          <li>pengawasan atas pelaksanaan tugas di lingkungan BIG</li>
-                        </ol>
-                      </div>
-                    )
-                  }
-                ].map((row) => (
-                  <StyledTableRow key={row.no}>
-                    <StyledTableCell align="center" style={{ fontWeight: 700, color: "#1a3a6b", verticalAlign: "top" }}>{row.no}</StyledTableCell>
-                    <StyledTableCell style={{ fontWeight: 600, verticalAlign: "top", width: "15%" }}>{row.jabatan}</StyledTableCell>
-                    <StyledTableCell style={{ color: "#5a6a84", verticalAlign: "top" }}>{row.tugas}</StyledTableCell>
+                {list && list.length > 0 ? (
+                  list.map((row, index) => (
+                    <StyledTableRow key={row.uuid || index}>
+                      <StyledTableCell align="center" style={{ fontWeight: 700, color: "#1a3a6b", verticalAlign: "top" }}>
+                        {index + 1}
+                      </StyledTableCell>
+                      <StyledTableCell style={{ fontWeight: 600, verticalAlign: "top", width: "20%" }}>
+                        {row.jabatan}
+                      </StyledTableCell>
+                      <StyledTableCell style={{ color: "#5a6a84", verticalAlign: "top" }}>
+                        <div dangerouslySetInnerHTML={{ __html: row.tugas_fungsi || "-" }} />
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ))
+                ) : (
+                  <StyledTableRow>
+                    <StyledTableCell colSpan={3} align="center" style={{ color: "#5a6a84", padding: "24px" }}>
+                      {list === null ? "Memuat data..." : "Formasi belum tersedia."}
+                    </StyledTableCell>
                   </StyledTableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </TableContainer>

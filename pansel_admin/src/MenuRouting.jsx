@@ -102,6 +102,9 @@ export default function MenuRouting() {
             <Route path="/pengumuman/add">
                 <PengumumanAdd />
             </Route>
+            <Route path="/pengumuman/edit/:dataId">
+                <PengumumanEdit />
+            </Route>
             <Route path="/pengumuman/preview/:dataId">
                 <PengumumanPreview />
             </Route>

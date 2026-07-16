@@ -53,7 +53,7 @@ export default function GazetteerTable() {
   const [refresh, setRefresh] = useState(false);
   const [dataId, setDataId] = useState();
 
-  const url_list = Config.api_domain+ "/pengumuman/active/";
+  const url_list = Config.api_domain+ "/pengumuman";
 
   const handleClickOpen = (dataId) => {
     setOpen(true);
@@ -98,8 +98,8 @@ export default function GazetteerTable() {
       };
 
       fetch(url_list, requestOptions).then(res => res.json()).then(data => {
-        setList(data.data);
-        //  if (data.status === "Expired token") {
+        const dataList = Array.isArray(data) ? data : (data.data || []);
+        setList(dataList);
       });
 
     } catch (error) {
@@ -121,10 +121,10 @@ export default function GazetteerTable() {
         };
 
         fetch(url_list, requestOptions).then(res => res.json()).then(data => {
-          //console.log(data)
-          if (data)
-            setList(data.data);
-          //  if (data.status === "Expired token") {
+          if (data) {
+            const dataList = Array.isArray(data) ? data : (data.data || []);
+            setList(dataList);
+          }
         });
         setRefresh(false)
 
@@ -142,28 +142,32 @@ export default function GazetteerTable() {
         if (list.length > 0) {
 
           return list.map((row, index) => {
-            //console.log(row
-            let dateISO = new Date(row.time_uploaded);
-            //console.log(dateISO.getTimezoneOffset())
+            const uuid = row.uuid || row.public_id;
+            const judul = row.judul || row.title;
+            const file_url = row.file_url || row.filename;
+            const tanggal = row.tanggal || row.createdAt || row.time_uploaded;
+            const status = row.is_active !== false;
 
+            let dateISO = new Date(tanggal);
             let formatted_datetime = dateToString(dateISO);
             return (
-              <StyledTableRow key={row.public_id}>
+              <StyledTableRow key={uuid || index}>
+                <StyledTableCell align="center">{index + 1}</StyledTableCell>
                 <StyledTableCell component="th" scope="row">
-                  {row.title}
+                  {judul || '-'}
                 </StyledTableCell>
-                <StyledTableCell>{row.filename}</StyledTableCell>
+                <StyledTableCell style={{ wordBreak: 'break-all' }}>{file_url || '-'}</StyledTableCell>
                 <StyledTableCell>{formatted_datetime}</StyledTableCell>
-                <StyledTableCell>{row.status ? 'Published' : 'Not published'}</StyledTableCell>
+                <StyledTableCell>{status ? 'Aktif' : 'Tidak Aktif'}</StyledTableCell>
                 <StyledTableCell>
-                  <IconButton aria-label="post message" component="a" href={"#/pengumuman/preview/" + row.public_id}>
-                    <Preview />
+                  <IconButton aria-label="view" component="a" href={Config.api_domain+"/pengumuman/view/" + uuid} target="_blank" rel="noopener noreferrer">
+                    <Preview color="primary" />
                   </IconButton>
-                  <IconButton aria-label="post message" component="a" href={Config.api_domain+"/pengumuman/download/" + row.public_id} >
-                    <Download />
+                  <IconButton aria-label="edit" component="a" href={"#/pengumuman/edit/" + uuid}>
+                    <Edit color="warning" />
                   </IconButton>
-                  <IconButton aria-label="post message" component="a" onClick={() => handleClickOpen(row.public_id)}>
-                    <Delete />
+                  <IconButton aria-label="delete" onClick={() => handleClickOpen(uuid)}>
+                    <Delete color="error" />
                   </IconButton>
                 </StyledTableCell>
               </StyledTableRow>
@@ -198,12 +202,12 @@ export default function GazetteerTable() {
       <Table stickyHeader sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Title</StyledTableCell>
-            <StyledTableCell>Filename</StyledTableCell>
-            <StyledTableCell>Time Uploaded	</StyledTableCell>
+            <StyledTableCell align="center" style={{ width: '60px' }}>No</StyledTableCell>
+            <StyledTableCell>Judul</StyledTableCell>
+            <StyledTableCell>Nama File</StyledTableCell>
+            <StyledTableCell>Tanggal Publikasi</StyledTableCell>
             <StyledTableCell>Status</StyledTableCell>
-            <StyledTableCell>Action</StyledTableCell>
-
+            <StyledTableCell>Aksi</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>

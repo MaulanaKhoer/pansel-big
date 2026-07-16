@@ -13,6 +13,12 @@ app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(express.json());
 
+app.use((req, res, next) => {
+  console.log(`[HTTP LOG] ${req.method} ${req.url} - Content-Type: ${req.headers['content-type']}`);
+  console.log(`[HTTP BODY]`, req.body);
+  next();
+});
+
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
