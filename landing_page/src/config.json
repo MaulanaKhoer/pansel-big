@@ -1,0 +1,5 @@
+{
+    "base_domain": "https://pansel.big.go.id/",
+    "api_domain": "https://megov.big.go.id/pansel_api",
+    "url_pelamar": "https://pansel.big.go.id/pelamar/"
+}

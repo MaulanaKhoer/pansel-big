@@ -1,0 +1,5 @@
+{
+    "logo": "logo_big.png",
+    "nama_sj": "Badan Informasi Geospasial",
+    "api_domain": "http://localhost:8080/api"
+}
