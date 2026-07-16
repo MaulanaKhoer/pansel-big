@@ -104,7 +104,9 @@ export default function FormasiTable() {
               <StyledTableCell component="th" scope="row">
                 {row.jabatan}
               </StyledTableCell>
-              <StyledTableCell>{row.tugas_fungsi || '-'}</StyledTableCell>
+              <StyledTableCell>
+                <div dangerouslySetInnerHTML={{ __html: row.tugas_fungsi || '-' }} />
+              </StyledTableCell>
               <StyledTableCell>{row.is_active ? 'Aktif' : 'Tidak Aktif'}</StyledTableCell>
               <StyledTableCell>
                 <IconButton aria-label="edit" component="a" href={"#/formasi/edit/" + row.uuid}>

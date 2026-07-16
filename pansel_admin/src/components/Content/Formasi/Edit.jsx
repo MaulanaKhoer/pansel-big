@@ -13,6 +13,9 @@ import { ArrowBack, Save } from '@mui/icons-material';
 import Config from '../../../config.json';
 import { getCookie } from '../../../Helpers';
 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 export default function FormasiEdit() {
 
     const [openBackdrop, setOpenBackdrop] = useState(false);
@@ -150,15 +153,23 @@ export default function FormasiEdit() {
                             />
                         </div>
                         <div style={{ marginBottom: '16px' }}>
-                            <TextField 
-                                size="small" 
-                                fullWidth 
-                                label="Tugas & Fungsi" 
-                                variant="outlined" 
-                                multiline
-                                rows={4}
+                            <label style={{ 
+                                display: 'block', 
+                                fontFamily: "'Plus Jakarta Sans', sans-serif", 
+                                fontSize: '13.5px', 
+                                fontWeight: 600, 
+                                color: 'var(--text-secondary)', 
+                                marginBottom: '8px' 
+                            }}>
+                                Tugas & Fungsi
+                            </label>
+                            <ReactQuill 
+                                theme="snow" 
                                 value={tugasFungsi} 
-                                onChange={(e) => setTugasFungsi(e.target.value)} 
+                                onChange={setTugasFungsi} 
+                                style={{
+                                    backgroundColor: '#fff',
+                                }}
                             />
                         </div>
                         <div style={{ marginBottom: '24px' }}>

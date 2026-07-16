@@ -4,6 +4,15 @@ Dokumen ini mencatat semua perubahan, pemecahan masalah, dan penyesuaian yang te
 
 ---
 
+## 16 Juli 2026 (Update 3)
+
+### 1. Implementasi WYSIWYG Editor pada Formasi
+- Menginstal paket npm `react-quill` untuk dukungan penyuntingan teks kaya (*rich text*).
+- Menulis ulang komponen [Add.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Formasi/Add.jsx) dan [Edit.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Formasi/Edit.jsx) pada modul Formasi untuk menyisipkan editor `ReactQuill` menggantikan input teks biasa pada kolom **Tugas & Fungsi**.
+- Memodifikasi [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Formasi/Table.jsx) pada modul Formasi untuk me-render nilai `tugas_fungsi` sebagai HTML terformat menggunakan `dangerouslySetInnerHTML` agar format cetak miring, tebal, maupun daftar terurut tampil dengan benar.
+
+---
+
 ## 16 Juli 2026 (Update 2)
 
 ### 1. Kustomisasi Sidebar Menu & Penghapusan Pelamar List
@@ -34,7 +43,7 @@ Dokumen ini mencatat semua perubahan, pemecahan masalah, dan penyesuaian yang te
   - Mengubah pemetaan data baris tabel untuk menampilkan `username` (pada kolom Nama) dan `email`, serta menampilkan status `'Aktif'` / `'Tidak Aktif'`.
   - Menggunakan properti `uuid` sebagai key baris React.
 
-### 2. Penyelarasan Desain & Layout (Kesesuaian Tema)
+### 2. Penyelarasan Desain & Layout (Kesisuaian Tema)
 * **Masalah:** Header dan form tambah/ubah/hapus akun menggunakan tampilan bawaan browser atau background abu-abu tua `#dedede` yang tidak senada dengan Dashboard Utama maupun panel navigasi kiri (Plus Jakarta Sans, linear gradient, modern cards).
 * **Solusi:**
   - **Halaman Utama Akun:** Mengubah header di [Main.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Akun/Main.jsx) dengan class `.page-header` serta menyisipkan tombol **Tambah Akun** bermotif gradasi emas-kuning sesuai tema.
