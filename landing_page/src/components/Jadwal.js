@@ -2,8 +2,8 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import Config from "../config.json";
 
-const URL_LIST = Config.api_domain + "/jadwal/active/";
-const URL_DATA = Config.api_domain + "/seleksi/active/";
+const URL_LIST = Config.api_domain + "/jadwal";
+const URL_CONFIG = Config.api_domain + "/web_config";
 
 function Jadwal() {
   const [list, setList] = useState(null);
@@ -12,12 +12,21 @@ function Jadwal() {
   useEffect(() => {
     fetch(URL_LIST, { method: "GET", headers: { "Content-Type": "application/json" } })
       .then((res) => res.json())
-      .then((data) => setList(data.data))
+      .then((data) => {
+        const dataList = Array.isArray(data) ? data : (data.data || []);
+        setList(dataList);
+      })
       .catch((err) => console.error(err));
 
-    fetch(URL_DATA, { method: "GET", headers: { "Content-Type": "application/json" } })
+    fetch(URL_CONFIG, { method: "GET", headers: { "Content-Type": "application/json" } })
       .then((res) => res.json())
-      .then((data) => setActiveStep(data.step))
+      .then((data) => {
+        const dataList = Array.isArray(data) ? data : (data.data || []);
+        const stepConfig = dataList.find((c) => c.key_name === "active_step" || c.key_name === "step");
+        if (stepConfig) {
+          setActiveStep(parseInt(stepConfig.value));
+        }
+      })
       .catch((err) => console.error(err));
   }, []);
 
@@ -93,10 +102,10 @@ function Jadwal() {
                       border: isActive ? "1.5px solid rgba(26,58,107,0.25)" : "1px solid rgba(26,58,107,0.08)",
                     }}>
                       <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: "15px", color: isDone ? "#1a6b4a" : isActive ? "#1a3a6b" : "#1a2236", marginBottom: "4px" }}>
-                        {step.judul}
+                        {step.kegiatan || step.judul}
                       </div>
                       <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "13px", color: "#5a6a84" }}>
-                        📅 {step.label}
+                        📅 {step.status || step.label}
                       </div>
                       {isActive && (
                         <div style={{ marginTop: "8px", display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(26,58,107,0.08)", borderRadius: "100px", padding: "3px 10px" }}>

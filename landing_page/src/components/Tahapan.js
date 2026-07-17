@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Config from "../config.json";
 
 /* ── Icon components ── */
 const IconClipboardCheck = () => (
@@ -37,62 +38,58 @@ const IconHeart = () => (
   </svg>
 );
 
-/* ── Data tahapan sesuai gambar referensi ── */
-const tahapanData = [
+/* ── Fallback data tahapan ── */
+const fallbackTahapanData = [
   {
-    step: 1,
-    title: "Seleksi Administrasi",
-    icon: <IconClipboardCheck />,
-    color: "#2563eb",
-    gradient: "linear-gradient(135deg, #2563eb, #3b82f6)",
-    items: [
-      "Panitia melakukan verifikasi kelengkapan berkas administrasi sesuai dengan ketentuan yang dipersyaratkan.",
-      "Panitia menetapkan calon peserta yang memenuhi persyaratan administrasi untuk mengikuti seleksi berikutnya.",
-    ],
+    step_no: 1,
+    judul: "Seleksi Administrasi",
+    icon_name: "clipboard",
+    deskripsi: "Panitia melakukan verifikasi kelengkapan berkas administrasi sesuai dengan ketentuan yang dipersyaratkan.\nPanitia menetapkan calon peserta yang memenuhi persyaratan administrasi untuk mengikuti seleksi berikutnya.",
   },
   {
-    step: 2,
-    title: "Seleksi Kompetensi Manajerial",
-    icon: <IconUsers />,
-    color: "#7c3aed",
-    gradient: "linear-gradient(135deg, #7c3aed, #8b5cf6)",
-    items: [
-      "Peserta akan mengikuti asesmen yang diselenggarakan oleh pihak luar yang ditunjuk oleh Panitia.",
-      <>Cakupan asesmen meliputi: <strong style={{ background: "linear-gradient(120deg, rgba(232,184,74,0.25) 0%, rgba(232,184,74,0.25) 100%)", padding: "2px 6px", borderRadius: "4px", color: "#92600a" }}>Tes Tertulis, Leaderless Group Discussion (LGD), dan Wawancara</strong>.</>,
-    ],
+    step_no: 2,
+    judul: "Seleksi Kompetensi Manajerial",
+    icon_name: "users",
+    deskripsi: "Peserta akan mengikuti asesmen yang diselenggarakan oleh pihak luar yang ditunjuk oleh Panitia.\nCakupan asesmen meliputi: Tes Tertulis, Leaderless Group Discussion (LGD), dan Wawancara.",
   },
   {
-    step: 3,
-    title: "Seleksi Kompetensi Teknis",
-    icon: <IconFileText />,
-    color: "#059669",
-    gradient: "linear-gradient(135deg, #059669, #10b981)",
-    items: [
-      <>Peserta akan diuji kemampuan dan kompetensi teknisnya melalui tes berupa: <strong style={{ background: "linear-gradient(120deg, rgba(232,184,74,0.25) 0%, rgba(232,184,74,0.25) 100%)", padding: "2px 6px", borderRadius: "4px", color: "#92600a" }}>pembuatan dan presentasi makalah, wawancara mendalam, dan penelusuran rekam jejak</strong>.</>,
-    ],
+    step_no: 3,
+    judul: "Seleksi Kompetensi Teknis",
+    icon_name: "file",
+    deskripsi: "Peserta akan diuji kemampuan dan kompetensi teknisnya melalui tes berupa: pembuatan dan presentasi makalah, wawancara mendalam, dan penelusuran rekam jejak.",
   },
   {
-    step: 4,
-    title: "Pengumuman Hasil Akhir 3 (Tiga) Besar",
-    icon: <IconAward />,
-    color: "#d97706",
-    gradient: "linear-gradient(135deg, #d97706, #f59e0b)",
-    items: [
-      "Panitia akan mengumumkan 3 (tiga) calon terbaik berdasarkan nilai akumulasi tes seleksi kompetensi manajerial dan seleksi kompetensi teknis.",
-    ],
+    step_no: 4,
+    judul: "Pengumuman Hasil Akhir 3 (Tiga) Besar",
+    icon_name: "award",
+    deskripsi: "Panitia akan mengumumkan 3 (tiga) calon terbaik berdasarkan nilai akumulasi tes seleksi kompetensi manajerial dan seleksi kompetensi teknis.",
   },
   {
-    step: 5,
-    title: "Tes Kesehatan",
-    icon: <IconHeart />,
-    color: "#dc2626",
-    gradient: "linear-gradient(135deg, #dc2626, #ef4444)",
-    items: [
-      "Peserta akan mengikuti Tes Kesehatan yang diselenggarakan oleh rumah sakit yang ditunjuk oleh Panitia.",
-      "Jenis-jenis pemeriksaan terdiri atas pemeriksaan fisik dan jiwa dengan tes MMPI.",
-    ],
+    step_no: 5,
+    judul: "Tes Kesehatan",
+    icon_name: "heart",
+    deskripsi: "Peserta akan mengikuti Tes Kesehatan yang diselenggarakan oleh rumah sakit yang ditunjuk oleh Panitia.\nJenis-jenis pemeriksaan terdiri atas pemeriksaan fisik dan jiwa dengan tes MMPI.",
   },
 ];
+
+/* ── Colors and Icons helper mappings ── */
+const colorMap = [
+  { color: "#2563eb", gradient: "linear-gradient(135deg, #2563eb, #3b82f6)" },
+  { color: "#7c3aed", gradient: "linear-gradient(135deg, #7c3aed, #8b5cf6)" },
+  { color: "#059669", gradient: "linear-gradient(135deg, #059669, #10b981)" },
+  { color: "#d97706", gradient: "linear-gradient(135deg, #d97706, #f59e0b)" },
+  { color: "#dc2626", gradient: "linear-gradient(135deg, #dc2626, #ef4444)" }
+];
+
+function getIconForStep(stepNo, iconName) {
+  const name = (iconName || "").toLowerCase();
+  if (name.includes("clipboard") || stepNo === 1) return <IconClipboardCheck />;
+  if (name.includes("users") || stepNo === 2) return <IconUsers />;
+  if (name.includes("file") || stepNo === 3) return <IconFileText />;
+  if (name.includes("award") || stepNo === 4) return <IconAward />;
+  if (name.includes("heart") || stepNo === 5) return <IconHeart />;
+  return <IconClipboardCheck />;
+}
 
 /* ── Styles ── */
 const styles = {
@@ -160,8 +157,18 @@ const styles = {
 };
 
 /* ── Card component ── */
-function StepCard({ item, index }) {
+function StepCard({ item, index, total }) {
   const [hovered, setHovered] = useState(false);
+
+  const stepNo = item.step_no || item.step || (index + 1);
+  const title = item.judul || item.title || "";
+  const rawItems = item.deskripsi || item.label || "";
+  const items = Array.isArray(rawItems)
+    ? rawItems
+    : (rawItems ? rawItems.split("\n").map(t => t.trim()).filter(t => t.length > 0) : []);
+
+  const stepStyle = colorMap[(stepNo - 1) % colorMap.length] || colorMap[0];
+  const stepIcon = getIconForStep(stepNo, item.icon_name);
 
   return (
     <div
@@ -171,7 +178,7 @@ function StepCard({ item, index }) {
         alignItems: "flex-start",
         position: "relative",
         zIndex: 2,
-        marginBottom: index < tahapanData.length - 1 ? "12px" : 0,
+        marginBottom: index < total - 1 ? "12px" : 0,
         animation: `fadeSlideUp 0.5s ease ${index * 0.1}s both`,
       }}
     >
@@ -182,7 +189,7 @@ function StepCard({ item, index }) {
           height: "56px",
           minWidth: "56px",
           borderRadius: "50%",
-          background: item.gradient,
+          background: stepStyle.gradient,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -190,14 +197,14 @@ function StepCard({ item, index }) {
           fontFamily: "'Plus Jakarta Sans', sans-serif",
           fontWeight: 800,
           fontSize: "20px",
-          boxShadow: `0 4px 20px ${item.color}40`,
+          boxShadow: `0 4px 20px ${stepStyle.color}40`,
           position: "relative",
           zIndex: 3,
           transition: "transform 0.3s ease, box-shadow 0.3s ease",
           transform: hovered ? "scale(1.1)" : "scale(1)",
         }}
       >
-        {item.step}
+        {stepNo}
       </div>
 
       {/* Card */}
@@ -210,11 +217,11 @@ function StepCard({ item, index }) {
           borderRadius: "16px",
           padding: "28px 32px",
           boxShadow: hovered
-            ? `0 12px 40px ${item.color}18, 0 0 0 1px ${item.color}20`
+            ? `0 12px 40px ${stepStyle.color}18, 0 0 0 1px ${stepStyle.color}20`
             : "0 2px 12px rgba(26,58,107,0.07)",
           transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
           transform: hovered ? "translateY(-2px)" : "translateY(0)",
-          borderLeft: `4px solid ${item.color}`,
+          borderLeft: `4px solid ${stepStyle.color}`,
           cursor: "default",
         }}
       >
@@ -225,16 +232,16 @@ function StepCard({ item, index }) {
               width: "44px",
               height: "44px",
               borderRadius: "12px",
-              background: `${item.color}10`,
+              background: `${stepStyle.color}10`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: item.color,
+              color: stepStyle.color,
               transition: "all 0.3s ease",
               transform: hovered ? "rotate(-5deg) scale(1.05)" : "rotate(0)",
             }}
           >
-            {item.icon}
+            {stepIcon}
           </div>
           <h3
             style={{
@@ -246,13 +253,13 @@ function StepCard({ item, index }) {
               lineHeight: 1.3,
             }}
           >
-            {item.title}
+            {title}
           </h3>
         </div>
 
         {/* Items */}
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {item.items.map((text, i) => (
+          {items.map((text, i) => (
             <div
               key={i}
               style={{
@@ -267,15 +274,15 @@ function StepCard({ item, index }) {
                   height: "22px",
                   minWidth: "22px",
                   borderRadius: "50%",
-                  background: `${item.color}12`,
-                  border: `1.5px solid ${item.color}30`,
+                  background: `${stepStyle.color}12`,
+                  border: `1.5px solid ${stepStyle.color}30`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   marginTop: "2px",
                   fontSize: "11px",
                   fontWeight: 700,
-                  color: item.color,
+                  color: stepStyle.color,
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
                 }}
               >
@@ -302,6 +309,30 @@ function StepCard({ item, index }) {
 
 /* ── Main component ── */
 function Tahapan() {
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    fetch(Config.api_domain + "/tahapan/active", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const dataList = Array.isArray(data) ? data : (data.data || []);
+        if (dataList.length > 0) {
+          // Sort by step_no
+          dataList.sort((a, b) => (a.step_no || 0) - (b.step_no || 0));
+          setList(dataList);
+        } else {
+          setList(fallbackTahapanData);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching tahapan:", err);
+        setList(fallbackTahapanData);
+      });
+  }, []);
+
   return (
     <div style={styles.page}>
       {/* Keyframes injection */}
@@ -335,8 +366,8 @@ function Tahapan() {
         {/* Vertical gradient line */}
         <div style={styles.timelineLine} />
 
-        {tahapanData.map((item, idx) => (
-          <StepCard key={item.step} item={item} index={idx} />
+        {list.map((item, idx) => (
+          <StepCard key={item.uuid || idx} item={item} index={idx} total={list.length} />
         ))}
       </div>
     </div>

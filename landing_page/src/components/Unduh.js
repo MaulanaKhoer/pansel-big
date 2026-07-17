@@ -36,93 +36,127 @@ const StyledTableRow = styled(TableRow)(() => ({
   "&:hover": { backgroundColor: "#e8eef8", transition: "background-color 0.2s ease" },
 }));
 
+/* ── Fallback static files list ── */
+const fallbackList = [
+  {
+    order_no: 1,
+    nama_berkas: "Daftar Riwayat Hidup",
+    nama_file: "Daftar Riwayat Hidup.docx",
+    tanggal_publikasi: "2026-07-10",
+    url_link: "https://docs.google.com/document/d/1b92_JQKO_ifCn5rQRrokM92ghh7uE7-J/export?format=docx"
+  },
+  {
+    order_no: 2,
+    nama_berkas: "Surat Keterangan Rekam Jejak Pengisian JPT Utama Kepala BIG",
+    nama_file: "Surat Keterangan Rekam Jejak Pengisian JPT Utama Kepala BIG.docx",
+    tanggal_publikasi: "2026-07-10",
+    url_link: "https://docs.google.com/document/d/1NRy5LBOJkQ_Kofl2wY52hlDuw1cyRrL9/export?format=docx"
+  },
+  {
+    order_no: 3,
+    nama_berkas: "Surat Rekomendasi Mengikuti Seleksi Terbuka JPT Utama Kepala BIG",
+    nama_file: "Surat Rekomendasi Mengikuti Seleksi Terbuka JPT Utama Kepala BIG.docx",
+    tanggal_publikasi: "2026-07-10",
+    url_link: "https://docs.google.com/document/d/1J7M2PpqjR8mKgmYIa_czN4QYTZCanI31/export?format=docx"
+  },
+  {
+    order_no: 4,
+    nama_berkas: "Surat Pernyataan Disiplin untuk Mengikuti Seleksi Terbuka",
+    nama_file: "Surat Pernyataan Disiplin untuk Mengikuti Seleksi Terbuka.docx",
+    tanggal_publikasi: "2026-07-10",
+    url_link: "https://docs.google.com/document/d/1j08tsvygIQfs_2IdZ9sR9P059LIkr-Rc/export?format=docx"
+  },
+  {
+    order_no: 5,
+    nama_berkas: "Surat Pernyataan Tidak Memiliki Afiliasi Dan Atau Menjadi Pengurus/ Anggota Partai Politik",
+    nama_file: "Surat Pernyataan Tidak Memiliki Afiliasi Dan Atau Menjadi Pengurus/ Anggota Partai Politik.docx",
+    tanggal_publikasi: "2026-07-10",
+    url_link: "https://docs.google.com/document/d/17zeURuKEHxio7VIl-XPrSxKf02oRKAOc/export?format=docx"
+  },
+  {
+    order_no: 6,
+    nama_berkas: "Pakta Integritas Mengikuti Seleksi Terbuka JPT Utama Kepala BIG",
+    nama_file: "Pakta Integritas Mengikuti Seleksi Terbuka JPT Utama Kepala BIG.docx",
+    tanggal_publikasi: "2026-07-10",
+    url_link: "https://docs.google.com/document/d/1-HPsIRvZuthfF6d8ERLB33TvrN3d8113/export?format=docx"
+  },
+  {
+    order_no: 7,
+    nama_berkas: "Surat Lamaran Mengikuti Seleksi Terbuka JPT Utama Kepala BIG",
+    nama_file: "Surat Lamaran Mengikuti Seleksi Terbuka JPT Utama Kepala BIG.docx",
+    tanggal_publikasi: "2026-07-10",
+    url_link: "https://docs.google.com/document/d/1iFcevBKIrqyBSJfvtXrx9nM-XTEed-3d/export?format=docx"
+  }
+];
+
 function Unduh() {
-  const list = [
-    {
-      no: 1,
-      title: "Daftar Riwayat Hidup",
-      filename: "Daftar Riwayat Hidup.docx",
-      date: "10 Juli 2026",
-      link: "https://docs.google.com/document/d/1b92_JQKO_ifCn5rQRrokM92ghh7uE7-J/export?format=docx"
-    },
-    {
-      no: 2,
-      title: "Surat Keterangan Rekam Jejak Pengisian JPT Utama Kepala BIG",
-      filename: "Surat Keterangan Rekam Jejak Pengisian JPT Utama Kepala BIG.docx",
-      date: "10 Juli 2026",
-      link: "https://docs.google.com/document/d/1NRy5LBOJkQ_Kofl2wY52hlDuw1cyRrL9/export?format=docx"
-    },
-    {
-      no: 3,
-      title: "Surat Rekomendasi Mengikuti Seleksi Terbuka JPT Utama Kepala BIG",
-      filename: "Surat Rekomendasi Mengikuti Seleksi Terbuka JPT Utama Kepala BIG.docx",
-      date: "10 Juli 2026",
-      link: "https://docs.google.com/document/d/1J7M2PpqjR8mKgmYIa_czN4QYTZCanI31/export?format=docx"
-    },
-    {
-      no: 4,
-      title: "Surat Pernyataan Disiplin untuk Mengikuti Seleksi Terbuka",
-      filename: "Surat Pernyataan Disiplin untuk Mengikuti Seleksi Terbuka.docx",
-      date: "10 Juli 2026",
-      link: "https://docs.google.com/document/d/1j08tsvygIQfs_2IdZ9sR9P059LIkr-Rc/export?format=docx"
-    },
-    {
-      no: 5,
-      title: "Surat Pernyataan Tidak Memiliki Afiliasi Dan Atau Menjadi Pengurus/ Anggota Partai Politik",
-      filename: "Surat Pernyataan Tidak Memiliki Afiliasi Dan Atau Menjadi Pengurus/ Anggota Partai Politik.docx",
-      date: "10 Juli 2026",
-      link: "https://docs.google.com/document/d/17zeURuKEHxio7VIl-XPrSxKf02oRKAOc/export?format=docx"
-    },
-    {
-      no: 6,
-      title: "Pakta Integritas Mengikuti Seleksi Terbuka JPT Utama Kepala BIG",
-      filename: "Pakta Integritas Mengikuti Seleksi Terbuka JPT Utama Kepala BIG.docx",
-      date: "10 Juli 2026",
-      link: "https://docs.google.com/document/d/1-HPsIRvZuthfF6d8ERLB33TvrN3d8113/export?format=docx"
-    },
-    {
-      no: 7,
-      title: "Surat Lamaran Mengikuti Seleksi Terbuka JPT Utama Kepala BIG",
-      filename: "Surat Lamaran Mengikuti Seleksi Terbuka JPT Utama Kepala BIG.docx",
-      date: "10 Juli 2026",
-      link: "https://docs.google.com/document/d/1iFcevBKIrqyBSJfvtXrx9nM-XTEed-3d/export?format=docx"
-    }
-  ];
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    fetch(Config.api_domain + "/unduh_berkas/active", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const dataList = Array.isArray(data) ? data : (data.data || []);
+        if (dataList.length > 0) {
+          setList(dataList);
+        } else {
+          setList(fallbackList);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching unduh berkas:", err);
+        setList(fallbackList);
+      });
+  }, []);
 
   function getRows() {
-    return list.map((row) => (
-      <StyledTableRow key={row.no}>
-        <StyledTableCell align="center" style={{ fontWeight: 700, color: "#1a3a6b" }}>{row.no}</StyledTableCell>
-        <StyledTableCell style={{ fontWeight: 600 }}>{row.title}</StyledTableCell>
-        <StyledTableCell style={{ color: "#5a6a84" }}>{row.filename}</StyledTableCell>
-        <StyledTableCell style={{ color: "#5a6a84", whiteSpace: "nowrap" }}>{row.date}</StyledTableCell>
-        <StyledTableCell align="center">
-          <a
-            href={row.link}
-            target="_blank"
-            rel="noreferrer"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              background: "linear-gradient(135deg, #1a3a6b, #2451a0)",
-              color: "#fff",
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontWeight: 600,
-              fontSize: "12px",
-              padding: "7px 16px",
-              borderRadius: "100px",
-              textDecoration: "none",
-              transition: "opacity 0.2s ease",
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
-          >
-            ⬇ Unduh
-          </a>
-        </StyledTableCell>
-      </StyledTableRow>
-    ));
+    return list.map((row, index) => {
+      const orderNo = row.order_no || (index + 1);
+      const formattedDate = row.tanggal_publikasi ? dateToStringDate(new Date(row.tanggal_publikasi)) : "-";
+      
+      let downloadLink = row.url_link || "";
+      const isExternal = downloadLink.startsWith("http://") || downloadLink.startsWith("https://");
+      if (!isExternal && row.uuid) {
+        downloadLink = Config.api_domain + "/unduh_berkas/download/" + row.uuid;
+      }
+
+      return (
+        <StyledTableRow key={row.uuid || index}>
+          <StyledTableCell align="center" style={{ fontWeight: 700, color: "#1a3a6b" }}>{orderNo}</StyledTableCell>
+          <StyledTableCell style={{ fontWeight: 600 }}>{row.nama_berkas}</StyledTableCell>
+          <StyledTableCell style={{ color: "#5a6a84" }}>{row.nama_file || "-"}</StyledTableCell>
+          <StyledTableCell style={{ color: "#5a6a84", whiteSpace: "nowrap" }}>{formattedDate}</StyledTableCell>
+          <StyledTableCell align="center">
+            <a
+              href={downloadLink}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                background: "linear-gradient(135deg, #1a3a6b, #2451a0)",
+                color: "#fff",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontWeight: 600,
+                fontSize: "12px",
+                padding: "7px 16px",
+                borderRadius: "100px",
+                textDecoration: "none",
+                transition: "opacity 0.2s ease",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+            >
+              ⬇ Unduh
+            </a>
+          </StyledTableCell>
+        </StyledTableRow>
+      );
+    });
   }
 
   return (

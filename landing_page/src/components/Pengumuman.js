@@ -36,7 +36,7 @@ const StyledTableRow = styled(TableRow)(() => ({
   "&:hover": { backgroundColor: "#e8eef8", transition: "background-color 0.2s ease" },
 }));
 
-const URL_LIST = Config.api_domain + "/pengumuman/active/";
+const URL_LIST = Config.api_domain + "/pengumuman/active";
 
 function Pengumuman() {
   const [list, setList] = useState(null);
@@ -47,7 +47,10 @@ function Pengumuman() {
       headers: { "Content-Type": "application/json" },
     })
       .then((res) => res.json())
-      .then((data) => setList(data.data))
+      .then((data) => {
+        const dataList = Array.isArray(data) ? data : (data.data || []);
+        setList(dataList);
+      })
       .catch((err) => console.error(err));
   }, []);
 
@@ -63,37 +66,39 @@ function Pengumuman() {
       );
     }
     return list.map((row, index) => {
-      const formatted_datetime = dateToStringDate(new Date(row.time_uploaded));
+      const formatted_datetime = row.tanggal ? dateToStringDate(new Date(row.tanggal)) : "-";
       return (
-        <StyledTableRow key={row.public_id}>
+        <StyledTableRow key={row.uuid || index}>
           <StyledTableCell align="center" style={{ fontWeight: 700, color: "#1a3a6b" }}>
             {index + 1}
           </StyledTableCell>
-          <StyledTableCell style={{ fontWeight: 500 }}>{row.title}</StyledTableCell>
+          <StyledTableCell style={{ fontWeight: 500 }}>{row.judul}</StyledTableCell>
           <StyledTableCell style={{ color: "#5a6a84", whiteSpace: "nowrap" }}>{formatted_datetime}</StyledTableCell>
           <StyledTableCell align="center">
-            <a
-              href={Config.api_domain + "/pengumuman/download/" + row.public_id}
-              download
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                background: "linear-gradient(135deg, #1a3a6b, #2451a0)",
-                color: "#fff",
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontWeight: 600,
-                fontSize: "12px",
-                padding: "7px 16px",
-                borderRadius: "100px",
-                textDecoration: "none",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
-            >
-              ⬇ Unduh
-            </a>
+            {row.file_url ? (
+              <a
+                href={Config.api_domain + "/pengumuman/download/" + row.uuid}
+                download
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  background: "linear-gradient(135deg, #1a3a6b, #2451a0)",
+                  color: "#fff",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontWeight: 600,
+                  fontSize: "12px",
+                  padding: "7px 16px",
+                  borderRadius: "100px",
+                  textDecoration: "none",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+              >
+                ⬇ Unduh
+              </a>
+            ) : "-"}
           </StyledTableCell>
         </StyledTableRow>
       );

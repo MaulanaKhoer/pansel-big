@@ -1,4 +1,3 @@
-
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,28 +6,25 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import InputBase from '@mui/material/InputBase';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import IconButton from '@mui/material/IconButton';
-import Search from '@mui/icons-material/Search';
-import Upload from '@mui/icons-material/Upload';
-import { Delete, Edit, Preview, Download, AssignmentTurnedIn } from '@mui/icons-material';
+import { Delete, Edit, Preview } from '@mui/icons-material';
 import DeleteDialog from "./DeleteDialog";
-import ApproveDialog from "./ApproveDialog";
 
 import { useState, useEffect } from 'react';
-
-
 import Config from '../../../config.json';
-import { getCookie, dateToString } from '../../../Helpers';
+import { getCookie } from '../../../Helpers';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.primary.light,
     color: theme.palette.common.white,
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    fontWeight: 700,
+    fontSize: '13px'
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
+    fontFamily: "'Plus Jakarta Sans', sans-serif"
   },
 }));
 
@@ -36,60 +32,39 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
   '&:last-child td, &:last-child th': {
     border: 0,
   },
 }));
 
-export default function GazetteerTable() {
+export default function BerkasTable() {
   const token = getCookie('OPERATOR_TOKEN');
-  const public_id = getCookie('USER_PUBLIC_ID');
 
   const [list, setList] = useState(null);
-
   const [open, setOpen] = useState(false);
-  const [openApproval, setOpenApproval] = useState(false);
-
   const [refresh, setRefresh] = useState(false);
   const [dataId, setDataId] = useState();
 
-  const url_list = Config.api_domain+ "/berkas/active/";
+  const url_list = Config.api_domain + "/unduh_berkas";
 
   const handleClickOpen = (dataId) => {
     setOpen(true);
-    setDataId(dataId)
+    setDataId(dataId);
   };
-
-  const handleClickApprove = (dataId) => {
-    setOpenApproval(true);
-    setDataId(dataId)
-  };
-
-  
-	const handleSearch = () => {
-		var q = document.getElementById('search').value;
-		//alert('aaa ' + q);
-		//setPage(0)
-		//setTag("")
-		//if (q)
-		//	setQuery(q)
-		//else
-		//	setQuery('none')
-	};
-
-  const handleKeyPress = (event) => {
-		if(event.key === 'Enter'){
-			handleSearch()
-			event.preventDefault();
-		}
-	  }
-
 
   useEffect(() => {
+    fetchData();
+  }, []);
 
+  useEffect(() => {
+    if (refresh) {
+      fetchData();
+      setRefresh(false);
+    }
+  }, [refresh]);
+
+  const fetchData = () => {
     try {
-      // Fetch data from REST API
       const requestOptions = {
         method: 'GET',
         headers: {
@@ -98,124 +73,85 @@ export default function GazetteerTable() {
         }
       };
 
-      fetch(url_list, requestOptions).then(res => res.json()).then(data => {
-        setList(data.data);
-        //  if (data.status === "Expired token") {
-      });
-
+      fetch(url_list, requestOptions)
+        .then(res => res.json())
+        .then(data => {
+          const dataList = Array.isArray(data) ? data : (data.data || []);
+          setList(dataList);
+        })
+        .catch(err => console.error(err));
     } catch (error) {
-      alert(`Error ${error}`)
+      console.error(`Error fetching berkas: ${error}`);
     }
-  }, []);
-
-
-  useEffect(() => {
-    if (refresh) {
-      try {
-        // Fetch data from REST API
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': token
-          }
-        };
-
-        fetch(url_list, requestOptions).then(res => res.json()).then(data => {
-          //console.log(data)
-          if (data)
-            setList(data.data);
-          //  if (data.status === "Expired token") {
-        });
-        setRefresh(false)
-
-      } catch (error) {
-        alert(`Error ${error}`)
-      }
-    }
-  }, [refresh]);
+  };
 
   function getRows() {
-    if (typeof (list) !== 'undefined') {
-      //var items=props.presensiDataLast.data;
-      if (list !== null) {
+    if (list !== null) {
+      if (list.length > 0) {
+        return list.map((row, index) => {
+          const uuid = row.uuid || row.public_id;
+          const namaBerkas = row.nama_berkas || row.title;
+          const namaFile = row.nama_file || row.filename;
+          const status = row.is_active !== false;
 
-        if (list.length > 0) {
+          let tglPublikasi = row.tanggal_publikasi ? new Date(row.tanggal_publikasi).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : "-";
 
-          return list.map((row, index) => {
-            //console.log(row
-            let dateISO = new Date(row.time_uploaded);
-            //console.log(dateISO.getTimezoneOffset())
-
-            let formatted_datetime = dateToString(dateISO);
-            return (
-              <StyledTableRow key={row.public_id}>
-                <StyledTableCell component="th" scope="row">
-                  {row.title}
-                </StyledTableCell>
-                <StyledTableCell>{row.filename}</StyledTableCell>
-                <StyledTableCell>{formatted_datetime}</StyledTableCell>
-                <StyledTableCell>{row.status ? 'Published' : 'Not published'}</StyledTableCell>
-                <StyledTableCell>
-                  <IconButton aria-label="post message" component="a" href={"#/berkas/preview/" + row.public_id}>
-                    <Preview />
-                  </IconButton>
-                  <IconButton aria-label="post message" component="a" href={Config.api_domain+"/berkas/download/" + row.public_id} >
-                    <Download />
-                  </IconButton>
-                  <IconButton aria-label="post message" component="a" onClick={() => handleClickOpen(row.public_id)}>
-                    <Delete />
-                  </IconButton>
-                </StyledTableCell>
-              </StyledTableRow>
-            )
-          })
-        } else {
           return (
-            <StyledTableRow >
-              <StyledTableCell component="th" scope="row" colspan="7">
-                No data found.
+            <StyledTableRow key={uuid || index}>
+              <StyledTableCell align="center">{index + 1}</StyledTableCell>
+              <StyledTableCell component="th" scope="row" style={{ fontWeight: 600 }}>
+                {namaBerkas || '-'}
+              </StyledTableCell>
+              <StyledTableCell style={{ wordBreak: 'break-all' }}>{namaFile || '-'}</StyledTableCell>
+              <StyledTableCell>{tglPublikasi}</StyledTableCell>
+              <StyledTableCell>{status ? 'Aktif' : 'Tidak Aktif'}</StyledTableCell>
+              <StyledTableCell>
+                <IconButton aria-label="view" component="a" href={Config.api_domain + "/unduh_berkas/view/" + uuid} target="_blank" rel="noopener noreferrer">
+                  <Preview color="primary" />
+                </IconButton>
+                <IconButton aria-label="edit" component="a" href={"#/berkas/edit/" + uuid}>
+                  <Edit color="warning" />
+                </IconButton>
+                <IconButton aria-label="delete" onClick={() => handleClickOpen(uuid)}>
+                  <Delete color="error" />
+                </IconButton>
               </StyledTableCell>
             </StyledTableRow>
-          )
-        }
+          );
+        });
       } else {
-        return null
+        return (
+          <StyledTableRow>
+            <StyledTableCell component="th" scope="row" colSpan="6" align="center">
+              No data found.
+            </StyledTableCell>
+          </StyledTableRow>
+        );
       }
-    } else {
-      return null
     }
+    return null;
   }
-  /*
-    <IconButton aria-label="post message" component="a" href={"#/metadata/edit/" + row.id}>
-                    <Edit />
-                  </IconButton>
 
-  */
   return (
     <>  
-    <TableContainer component={Paper} className="admin-table-container">
-      <DeleteDialog open={open} setOpen={(e) => setOpen(e)} dataId={dataId} setRefresh={(e) => setRefresh(e)} />
-      <Table stickyHeader sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Title</StyledTableCell>
-            <StyledTableCell>Filename</StyledTableCell>
-            <StyledTableCell>Time Uploaded	</StyledTableCell>
-            <StyledTableCell>Status</StyledTableCell>
-            <StyledTableCell>Action</StyledTableCell>
-
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {
-            getRows()
-
-          }
-
-        </TableBody>
-      </Table>
-    </TableContainer>
+      <TableContainer component={Paper} className="admin-table-container">
+        <DeleteDialog open={open} setOpen={(e) => setOpen(e)} dataId={dataId} setRefresh={(e) => setRefresh(e)} />
+        <Table stickyHeader sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell align="center" style={{ width: '60px' }}>No</StyledTableCell>
+              <StyledTableCell>Nama Berkas</StyledTableCell>
+              <StyledTableCell>Nama File</StyledTableCell>
+              <StyledTableCell>Tanggal Publikasi</StyledTableCell>
+              <StyledTableCell style={{ width: '120px' }}>Status</StyledTableCell>
+              <StyledTableCell style={{ width: '150px' }}>Aksi</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {getRows()}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
-  )
+  );
 }

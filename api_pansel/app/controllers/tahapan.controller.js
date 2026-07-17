@@ -2,7 +2,7 @@ const db = require("../models");
 const Tahapan = db.tahapan;
 
 exports.create = (req, res) => {
-  if (!req.body.judul) {
+  if (!req.body || !req.body.judul) {
     res.status(400).send({
       message: "Content can not be empty!"
     });

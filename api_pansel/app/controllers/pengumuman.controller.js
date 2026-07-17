@@ -114,7 +114,7 @@ exports.update = (req, res) => {
           if (num == 1) {
             // Delete old file if new file was uploaded
             if (req.files && req.files.length > 0 && oldFile) {
-              const oldFilePath = path.join(__dirname, "../../uploads/", oldFile);
+              const oldFilePath = path.join(__dirname, "../../uploads/pengumuman/", oldFile);
               if (fs.existsSync(oldFilePath)) {
                 fs.unlinkSync(oldFilePath);
               }
@@ -154,7 +154,7 @@ exports.delete = (req, res) => {
           if (num == 1) {
             // Delete associated file
             if (file_url) {
-              const filePath = path.join(__dirname, "../../uploads/", file_url);
+              const filePath = path.join(__dirname, "../../uploads/pengumuman/", file_url);
               if (fs.existsSync(filePath)) {
                 fs.unlinkSync(filePath);
               }
@@ -184,7 +184,7 @@ exports.download = (req, res) => {
   Pengumuman.findOne({ where: { uuid: uuid } })
     .then(data => {
       if (data && data.file_url) {
-        const filePath = path.join(__dirname, "../../uploads/", data.file_url);
+        const filePath = path.join(__dirname, "../../uploads/pengumuman/", data.file_url);
         if (fs.existsSync(filePath)) {
           res.download(filePath, data.judul + path.extname(data.file_url));
         } else {
@@ -211,7 +211,7 @@ exports.view = (req, res) => {
   Pengumuman.findOne({ where: { uuid: uuid } })
     .then(data => {
       if (data && data.file_url) {
-        const filePath = path.join(__dirname, "../../uploads/", data.file_url);
+        const filePath = path.join(__dirname, "../../uploads/pengumuman/", data.file_url);
         if (fs.existsSync(filePath)) {
           res.contentType("application/pdf");
           res.sendFile(filePath);

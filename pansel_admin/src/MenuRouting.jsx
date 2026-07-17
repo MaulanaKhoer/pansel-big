@@ -13,6 +13,8 @@ import FormasiAdd from './components/Content/Formasi/Add';
 import FormasiEdit from './components/Content/Formasi/Edit';
 import Kontak from './components/Content/Kontak/Main';
 import Tahapan from './components/Content/Tahapan/Main';
+import TahapanAdd from './components/Content/Tahapan/Add';
+import TahapanEdit from './components/Content/Tahapan/Edit';
 
 import Jadwal from './components/Content/Jadwal/Main';
 import JadwalAdd from './components/Content/Jadwal/Add';
@@ -85,6 +87,12 @@ export default function MenuRouting() {
                 <Jadwal />
             </Route>
 
+            <Route path="/tahapan/add">
+                <TahapanAdd />
+            </Route>
+            <Route path="/tahapan/edit/:dataId">
+                <TahapanEdit />
+            </Route>
             <Route path="/tahapan">
                 <Tahapan />
             </Route>

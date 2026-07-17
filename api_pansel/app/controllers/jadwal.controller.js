@@ -2,15 +2,22 @@ const db = require("../models");
 const Jadwal = db.jadwal;
 
 exports.create = (req, res) => {
-  if (!req.body.kegiatan) {
+  const kegiatan = req.body ? (req.body.kegiatan || req.body.judul) : null;
+
+  if (!req.body || !kegiatan) {
     res.status(400).send({
       message: "Content can not be empty!"
     });
     return;
   }
 
-  const data = req.body;
-  
+  const data = {
+    kegiatan: kegiatan,
+    status: req.body.status || req.body.label || "",
+    tanggal_mulai: req.body.tanggal_mulai || null,
+    tanggal_selesai: req.body.tanggal_selesai || null,
+    order_no: req.body.order_no ? parseInt(req.body.order_no) : null
+  };
 
   Jadwal.create(data)
     .then(result => {
@@ -24,7 +31,7 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  Jadwal.findAll()
+  Jadwal.findAll({ order: [['order_no', 'ASC'], ['createdAt', 'DESC']] })
     .then(data => {
       res.send(data);
     })
@@ -57,8 +64,17 @@ exports.findOne = (req, res) => {
 
 exports.update = (req, res) => {
   const uuid = req.params.uuid;
-  const data = req.body;
-  
+
+  const data = {};
+  if (req.body) {
+    if (req.body.kegiatan !== undefined) data.kegiatan = req.body.kegiatan;
+    if (req.body.judul !== undefined) data.kegiatan = req.body.judul;
+    if (req.body.status !== undefined) data.status = req.body.status;
+    if (req.body.label !== undefined) data.status = req.body.label;
+    if (req.body.tanggal_mulai !== undefined) data.tanggal_mulai = req.body.tanggal_mulai;
+    if (req.body.tanggal_selesai !== undefined) data.tanggal_selesai = req.body.tanggal_selesai;
+    if (req.body.order_no !== undefined) data.order_no = req.body.order_no ? parseInt(req.body.order_no) : null;
+  }
 
   Jadwal.update(data, {
     where: { uuid: uuid }
