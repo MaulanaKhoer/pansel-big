@@ -352,11 +352,11 @@ function Tahapan() {
       <div style={styles.header}>
         <div style={styles.headerInner}>
           <div style={styles.badge}>
-            <span style={styles.badgeText}>Seleksi Terbuka · BIG 2026</span>
+            <span style={styles.badgeText}>Seleksi Terbuka</span>
           </div>
           <h1 style={styles.h1}>Tahapan Seleksi</h1>
           <p style={styles.subtitle}>
-            Seleksi Jabatan Pimpinan Tinggi Pratama — Badan Informasi Geospasial 2026
+            Seleksi Jabatan Pimpinan Tinggi Pratama — Badan Informasi Geospasial
           </p>
         </div>
       </div>

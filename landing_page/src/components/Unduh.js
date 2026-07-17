@@ -165,13 +165,13 @@ function Unduh() {
       <div style={{ background: "linear-gradient(135deg, #0f2347 0%, #1a3a6b 100%)", padding: "48px 24px 40px" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(200,146,42,0.15)", border: "1px solid rgba(200,146,42,0.4)", borderRadius: "100px", padding: "5px 14px", marginBottom: "16px" }}>
-            <span style={{ fontSize: "11px", fontWeight: 700, color: "#e8b84a", letterSpacing: "1.2px", textTransform: "uppercase" }}>Seleksi Terbuka · BIG 2026</span>
+            <span style={{ fontSize: "11px", fontWeight: 700, color: "#e8b84a", letterSpacing: "1.2px", textTransform: "uppercase" }}>Seleksi Terbuka</span>
           </div>
           <h1 style={{ color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 3vw, 2.4rem)", margin: 0, lineHeight: 1.2 }}>
             Unduh Berkas Dokumen
           </h1>
           <p style={{ color: "rgba(255,255,255,0.7)", fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "15px", marginTop: "8px" }}>
-            Seleksi Jabatan Pimpinan Tinggi Pratama — Badan Informasi Geospasial 2026
+            Seleksi Jabatan Pimpinan Tinggi Pratama — Badan Informasi Geospasial
           </p>
         </div>
       </div>

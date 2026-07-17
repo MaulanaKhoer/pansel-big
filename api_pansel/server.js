@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: true }));
 
 db.sequelize.sync();
-// In development, you may need to drop existing tables and re-sync database.
+//In development, you may need to drop existing tables and re-sync database.
 // db.sequelize.sync({ force: true }).then(() => {
 //   console.log("Drop and re-sync db.");
 // });

@@ -27,7 +27,7 @@ const navItems = [
     { label: 'Jadwal', href: '#/jadwal', icon: EventIcon, path: '/jadwal' },
     { label: 'Tahapan', href: '#/tahapan', icon: ForumIcon, path: '/tahapan' },
     { label: 'Unduh', href: '#/berkas', icon: CollectionsBookmarkIcon, path: '/berkas' },
-    { label: 'Account List', href: '#/akun', icon: PersonIcon, path: '/akun' },
+    { label: 'User Admin', href: '#/akun', icon: PersonIcon, path: '/akun' },
 ];
 
 export default function LeftMenu() {

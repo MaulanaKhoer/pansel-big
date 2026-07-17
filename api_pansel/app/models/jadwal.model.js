@@ -16,7 +16,8 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.DATEONLY
     },
     status: {
-      type: Sequelize.STRING(50)
+      type: Sequelize.BOOLEAN,
+      defaultValue: true
     },
     order_no: {
       type: Sequelize.INTEGER

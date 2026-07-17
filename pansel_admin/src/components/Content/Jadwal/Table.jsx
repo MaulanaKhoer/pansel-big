@@ -91,7 +91,7 @@ export default function JadwalTable() {
         return list.map((row, index) => {
           const uuid = row.uuid || row.public_id;
           const kegiatan = row.kegiatan || row.judul;
-          const status = row.status || row.label;
+          const status = row.status === true ? "Aktif" : (row.status === false ? "Tidak Aktif" : (row.label || "-"));
           
           let tglMulai = row.tanggal_mulai ? new Date(row.tanggal_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : "-";
           let tglSelesai = row.tanggal_selesai ? new Date(row.tanggal_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : "-";

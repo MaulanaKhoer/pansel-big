@@ -8,6 +8,7 @@ import Backdrop from '@mui/material/Backdrop';
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { ArrowBack, Save } from '@mui/icons-material';
+import MenuItem from '@mui/material/MenuItem';
 
 import Config from '../../../config.json';
 import { getCookie } from '../../../Helpers';
@@ -47,7 +48,7 @@ export default function JadwalEdit() {
                     setKegiatan(data.kegiatan || data.judul || "");
                     setTanggalMulai(data.tanggal_mulai || "");
                     setTanggalSelesai(data.tanggal_selesai || "");
-                    setStatus(data.status || data.label || "");
+                    setStatus(data.status !== null && data.status !== undefined ? data.status : "");
                     setOrderNo(data.order_no !== null ? String(data.order_no) : "");
                 })
                 .catch(err => console.error(err));
@@ -76,7 +77,7 @@ export default function JadwalEdit() {
     };
 
     function validateForm() {
-        return !loading && kegiatan.length > 0 && status.length > 0;
+        return !loading && kegiatan.length > 0 && status !== "";
     }
 
     const postData = async () => {
@@ -148,12 +149,16 @@ export default function JadwalEdit() {
                             <TextField 
                                 size="small" 
                                 fullWidth 
-                                label="Status / Keterangan" 
+                                select
+                                label="Status" 
                                 variant="outlined" 
                                 value={status} 
                                 onChange={(e) => setStatus(e.target.value)} 
                                 required 
-                            />
+                            >
+                                <MenuItem value={true}>Aktif</MenuItem>
+                                <MenuItem value={false}>Tidak Aktif</MenuItem>
+                            </TextField>
                         </div>
                         <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
                             <TextField 

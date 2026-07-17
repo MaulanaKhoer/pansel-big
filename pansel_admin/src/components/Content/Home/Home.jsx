@@ -66,12 +66,12 @@ export default function Home() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "16px", marginBottom: "28px" }}>
                 {[
                     { icon: "⚙️", label: "Pansel Setting", href: "#/pansel", desc: "Konfigurasi seleksi" },
-                    { icon: "📋", label: "Pengumuman", href: "#/pengumuman", desc: "Kelola pengumuman" },
+                    { icon: "🗂️", label: "Formasi", href: "#/formasi", desc: "Kelola data formasi" },
+                    { icon: "📢", label: "Pengumuman", href: "#/pengumuman", desc: "Kelola pengumuman" },
                     { icon: "🗓️", label: "Jadwal", href: "#/jadwal", desc: "Manajemen jadwal" },
-                    { icon: "📁", label: "Berkas", href: "#/berkas", desc: "Dokumen & berkas" },
                     { icon: "📌", label: "Tahapan", href: "#/tahapan", desc: "Tahapan seleksi" },
-                    { icon: "👥", label: "Pelamar", href: "#/pelamar", desc: "Daftar pelamar" },
-                    { icon: "👤", label: "Account", href: "#/akun", desc: "Manajemen akun" },
+                    { icon: "📁", label: "Unduh", href: "#/berkas", desc: "Dokumen & berkas unduhan" },
+                    { icon: "👥", label: "User Admin", href: "#/akun", desc: "Manajemen user admin" },
                 ].map((item) => (
                     <a
                         key={item.href}

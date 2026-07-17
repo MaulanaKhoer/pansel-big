@@ -6,11 +6,23 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       unique: true
     },
-    key_name: {
-      type: Sequelize.STRING(50)
+    title: {
+      type: Sequelize.STRING
     },
-    value: {
+    caption: {
       type: Sequelize.TEXT
+    },
+    pratama: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    },
+    madya: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    },
+    utama: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
     }
   });
 

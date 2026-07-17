@@ -63,13 +63,17 @@ function Beranda() {
 
           <div className="formasi-grid">
             {[
-              { count: 1, label: "JPT Pratama" },
-            ].map((item, idx) => (
-              <div className="formasi-card" key={idx}>
-                <div className="formasi-number">{item.count ?? "–"}</div>
-                <div className="formasi-label">{item.label}</div>
-              </div>
-            ))}
+              { count: data?.pratama, label: "JPT Pratama" },
+              { count: data?.madya, label: "JPT Madya" },
+              { count: data?.utama, label: "JPT Utama" },
+            ]
+              .filter((item) => item.count !== undefined && item.count !== null && item.count > 0)
+              .map((item, idx) => (
+                <div className="formasi-card" key={idx}>
+                  <div className="formasi-number">{item.count}</div>
+                  <div className="formasi-label">{item.label}</div>
+                </div>
+              ))}
           </div>
 
           <div style={{ textAlign: "center" }}>
@@ -143,45 +147,6 @@ function Beranda() {
             </div>
             <a href="#/daftar" className="btn-cta">
               Daftar Sekarang →
-            </a>
-          </div>
-
-          {/* Tatacara */}
-          <div
-            style={{
-              background: "linear-gradient(135deg, #1a6b4a 0%, #2da876 100%)",
-              borderRadius: "16px",
-              overflow: "hidden",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "36px 48px",
-              gap: "24px",
-              boxShadow: "0 8px 32px rgba(26,107,74,0.20)",
-            }}
-          >
-            <div>
-              <h2
-                style={{
-                  color: "#fff",
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  marginBottom: "6px",
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                }}
-              >
-                📖 Tatacara Pendaftaran
-              </h2>
-              <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "14px", margin: 0 }}>
-                Tatacara Pendaftaran Seleksi JPT Badan Informasi Geospasial
-              </p>
-            </div>
-            <a
-              href="./Tutorial_Pendaftaran_Seleksi_Terbuka.pdf"
-              download
-              className="btn-cta"
-            >
-              Unduh Tutorial →
             </a>
           </div>
 

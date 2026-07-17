@@ -4,6 +4,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Backdrop from '@mui/material/Backdrop';
+import MenuItem from '@mui/material/MenuItem';
 
 import { useState } from 'react';
 import { ArrowBack, Save } from '@mui/icons-material';
@@ -21,7 +22,7 @@ export default function JadwalAdd() {
     const [kegiatan, setKegiatan] = useState("");
     const [tanggalMulai, setTanggalMulai] = useState("");
     const [tanggalSelesai, setTanggalSelesai] = useState("");
-    const [status, setStatus] = useState("");
+    const [status, setStatus] = useState(true);
     const [orderNo, setOrderNo] = useState("");
 
     const token = getCookie('OPERATOR_TOKEN');
@@ -46,7 +47,7 @@ export default function JadwalAdd() {
     };
 
     function validateForm() {
-        return !loading && kegiatan.length > 0 && status.length > 0;
+        return !loading && kegiatan.length > 0 && status !== "";
     }
 
     const postData = async () => {
@@ -118,12 +119,16 @@ export default function JadwalAdd() {
                             <TextField 
                                 size="small" 
                                 fullWidth 
-                                label="Status / Keterangan" 
+                                select
+                                label="Status" 
                                 variant="outlined" 
                                 value={status} 
                                 onChange={(e) => setStatus(e.target.value)} 
                                 required 
-                            />
+                            >
+                                <MenuItem value={true}>Aktif</MenuItem>
+                                <MenuItem value={false}>Tidak Aktif</MenuItem>
+                            </TextField>
                         </div>
                         <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
                             <TextField 

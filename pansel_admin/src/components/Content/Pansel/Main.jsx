@@ -1,35 +1,23 @@
 
 
 import styled from "styled-components";
-
 import Edit from "./Edit";
-
-
-import { AddCircle } from "@mui/icons-material";
-import Button from "@mui/material/Button";
 
 export default function Main() {
     return (
       <Container>
-      <Title>Pansel Setting</Title>
-      <Edit />
-    </Container>
+        <div className="page-header">
+          <div>
+            <div className="page-header-badge">⚙️ Konfigurasi</div>
+            <h1 className="page-header-title">Pansel Setting</h1>
+            <p className="page-header-subtitle">Kelola informasi umum dan sebaran formasi seleksi terbuka</p>
+          </div>
+        </div>
+        <Edit />
+      </Container>
     )
 }
 
 const Container = styled.div`
   padding: 1em;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 20px;
-`;
-
-const Title = styled.h3`
-  font-size: 16px;
-  margin-top: 0px;
-  padding: 10px;
-  background-color: #dedede;
 `;

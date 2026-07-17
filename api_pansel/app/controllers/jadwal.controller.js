@@ -11,9 +11,10 @@ exports.create = (req, res) => {
     return;
   }
 
+  const statusVal = req.body.status !== undefined && req.body.status !== null ? req.body.status : (req.body.label !== undefined && req.body.label !== null ? req.body.label : true);
   const data = {
     kegiatan: kegiatan,
-    status: req.body.status || req.body.label || "",
+    status: typeof statusVal === 'boolean' ? statusVal : (statusVal === 'true' || statusVal === true || statusVal === 1),
     tanggal_mulai: req.body.tanggal_mulai || null,
     tanggal_selesai: req.body.tanggal_selesai || null,
     order_no: req.body.order_no ? parseInt(req.body.order_no) : null
@@ -69,8 +70,12 @@ exports.update = (req, res) => {
   if (req.body) {
     if (req.body.kegiatan !== undefined) data.kegiatan = req.body.kegiatan;
     if (req.body.judul !== undefined) data.kegiatan = req.body.judul;
-    if (req.body.status !== undefined) data.status = req.body.status;
-    if (req.body.label !== undefined) data.status = req.body.label;
+    if (req.body.status !== undefined) {
+      data.status = typeof req.body.status === 'boolean' ? req.body.status : (req.body.status === 'true' || req.body.status === true || req.body.status === 1);
+    }
+    if (req.body.label !== undefined) {
+      data.status = typeof req.body.label === 'boolean' ? req.body.label : (req.body.label === 'true' || req.body.label === true || req.body.label === 1);
+    }
     if (req.body.tanggal_mulai !== undefined) data.tanggal_mulai = req.body.tanggal_mulai;
     if (req.body.tanggal_selesai !== undefined) data.tanggal_selesai = req.body.tanggal_selesai;
     if (req.body.order_no !== undefined) data.order_no = req.body.order_no ? parseInt(req.body.order_no) : null;

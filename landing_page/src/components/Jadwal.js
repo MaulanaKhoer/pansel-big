@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import Config from "../config.json";
 
 const URL_LIST = Config.api_domain + "/jadwal";
-const URL_CONFIG = Config.api_domain + "/web_config";
 
 function Jadwal() {
   const [list, setList] = useState(null);
@@ -15,16 +14,13 @@ function Jadwal() {
       .then((data) => {
         const dataList = Array.isArray(data) ? data : (data.data || []);
         setList(dataList);
-      })
-      .catch((err) => console.error(err));
 
-    fetch(URL_CONFIG, { method: "GET", headers: { "Content-Type": "application/json" } })
-      .then((res) => res.json())
-      .then((data) => {
-        const dataList = Array.isArray(data) ? data : (data.data || []);
-        const stepConfig = dataList.find((c) => c.key_name === "active_step" || c.key_name === "step");
-        if (stepConfig) {
-          setActiveStep(parseInt(stepConfig.value));
+        // Find the active step index dynamically from status boolean
+        const activeIdx = dataList.findIndex(
+          (item) => item.status === true || item.status === 1 || item.status === "true"
+        );
+        if (activeIdx !== -1) {
+          setActiveStep(activeIdx);
         }
       })
       .catch((err) => console.error(err));
@@ -32,19 +28,45 @@ function Jadwal() {
 
   const steps = list ?? [];
 
+  const formatJadwalDate = (tanggalMulai, tanggalSelesai) => {
+    const formatDate = (dateStr) => {
+      if (!dateStr) return "";
+      try {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return d.toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      } catch (e) {
+        return dateStr;
+      }
+    };
+
+    if (!tanggalMulai && !tanggalSelesai) return "-";
+    if (tanggalMulai && tanggalSelesai) {
+      if (tanggalMulai === tanggalSelesai) {
+        return formatDate(tanggalMulai);
+      }
+      return `${formatDate(tanggalMulai)} - ${formatDate(tanggalSelesai)}`;
+    }
+    return formatDate(tanggalMulai || tanggalSelesai);
+  };
+
   return (
     <div style={{ background: "#f4f6fb", minHeight: "75vh", paddingBottom: "48px" }}>
       {/* Page Header */}
       <div style={{ background: "linear-gradient(135deg, #0f2347 0%, #1a3a6b 100%)", padding: "48px 24px 40px" }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(200,146,42,0.15)", border: "1px solid rgba(200,146,42,0.4)", borderRadius: "100px", padding: "5px 14px", marginBottom: "16px" }}>
-            <span style={{ fontSize: "11px", fontWeight: 700, color: "#e8b84a", letterSpacing: "1.2px", textTransform: "uppercase" }}>Seleksi Terbuka · BIG 2026</span>
+            <span style={{ fontSize: "11px", fontWeight: 700, color: "#e8b84a", letterSpacing: "1.2px", textTransform: "uppercase" }}>Seleksi Terbuka</span>
           </div>
           <h1 style={{ color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 3vw, 2.4rem)", margin: 0, lineHeight: 1.2 }}>
             Jadwal Seleksi
           </h1>
           <p style={{ color: "rgba(255,255,255,0.7)", fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "15px", marginTop: "8px" }}>
-            Seleksi Jabatan Pimpinan Tinggi Pratama — Badan Informasi Geospasial 2026
+            Seleksi Jabatan Pimpinan Tinggi Pratama — Badan Informasi Geospasial
           </p>
         </div>
       </div>
@@ -105,7 +127,7 @@ function Jadwal() {
                         {step.kegiatan || step.judul}
                       </div>
                       <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "13px", color: "#5a6a84" }}>
-                        📅 {step.status || step.label}
+                        📅 {formatJadwalDate(step.tanggal_mulai, step.tanggal_selesai)}
                       </div>
                       {isActive && (
                         <div style={{ marginTop: "8px", display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(26,58,107,0.08)", borderRadius: "100px", padding: "3px 10px" }}>
