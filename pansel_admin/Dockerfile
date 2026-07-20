@@ -6,7 +6,7 @@ RUN npm install
 COPY . .
 
 # Override config.json with production API URL
-ARG API_URL=http://10.10.170.124:8080/api
+ARG API_URL=https://pansel.big.go.id/api
 RUN echo "{\"logo\": \"logo_big.png\", \"nama_sj\": \"Badan Informasi Geospasial\", \"api_domain\": \"${API_URL}\"}" > src/config.json
 
 RUN npm run build

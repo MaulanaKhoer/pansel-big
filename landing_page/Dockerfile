@@ -6,8 +6,8 @@ RUN npm install
 COPY . .
 
 # Override config.json with production API URL
-ARG API_URL=http://10.10.170.124:8080/api
-RUN echo "{\"base_domain\": \"http://10.10.170.124/\", \"api_domain\": \"${API_URL}\", \"url_pelamar\": \"http://10.10.170.124/pelamar/\"}" > src/config.json
+ARG API_URL=https://pansel.big.go.id/api
+RUN echo "{\"base_domain\": \"https://pansel.big.go.id/\", \"api_domain\": \"${API_URL}\", \"url_pelamar\": \"https://pansel.big.go.id/pelamar/\"}" > src/config.json
 
 RUN npm run build
 

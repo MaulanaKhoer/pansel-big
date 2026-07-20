@@ -44,7 +44,7 @@ services:
     build:
       context: ./landing_page
       args:
-        API_URL: http://10.10.170.124:8080/api
+        API_URL: https://pansel.big.go.id/api
     container_name: jpt_landing
     restart: always
     ports:
@@ -59,7 +59,7 @@ services:
     build:
       context: ./pansel_admin
       args:
-        API_URL: http://10.10.170.124:8080/api
+        API_URL: https://pansel.big.go.id/api
     container_name: jpt_admin
     restart: always
     ports:
