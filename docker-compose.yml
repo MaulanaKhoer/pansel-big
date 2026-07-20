@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: jpt_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secretpassword}
+      POSTGRES_DB: ${DB_NAME:-db_pansel}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: ./api_pansel
+    container_name: jpt_api
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DB_HOST=db
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-secretpassword}
+      - DB_NAME=${DB_NAME:-db_pansel}
+      - DB_PORT=5432
+      - JWT_SECRET=${JWT_SECRET:-rahasia_jwt_produksi_yang_kuat}
+    depends_on:
+      - db
+
+  landing_page:
+    build: ./landing_page
+    container_name: jpt_landing
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+
+  pansel_admin:
+    build: ./pansel_admin
+    container_name: jpt_admin
+    restart: always
+    ports:
+      - "81:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

@@ -1,47 +1,35 @@
-import styled from "styled-components";
-import { useState, useEffect } from 'react';
-
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Backdrop from '@mui/material/Backdrop';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Backdrop from '@mui/material/Backdrop';
+import { Save } from '@mui/icons-material';
+
+import { useState, useEffect } from 'react';
 
 import Config from '../../config.json';
 import { getCookie } from '../../Helpers';
 
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
-
-export default function FormInformation({handleCloseDialog}) {
-
+export default function FormInformation({ handleCloseDialog }) {
     const [openBackdrop, setOpenBackdrop] = useState(false);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [message, setMessage] = useState("");
     const [open, setOpen] = useState(false);
 
-
-    const [user, setUser] = useState(null);
-    const [fullname, setFullname] = useState("");
+    const [publicId, setPublicId] = useState("");
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const token = getCookie('OPERATOR_TOKEN');
-    const public_id = getCookie('OPERATOR_PUBLIC_ID');
-    const url_profile = Config.api_domain + "/operator/id/";
-    const url_update = Config.api_domain + "/operator/update/";
+    const operator_public_id = getCookie('OPERATOR_PUBLIC_ID');
 
-    
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpen(false);
-    };
+    const url_user = Config.api_domain + "/user/";
 
     useEffect(() => {
-
         try {
-            // Fetch data from REST API
             const requestOptions = {
                 method: 'GET',
                 headers: {
@@ -50,22 +38,29 @@ export default function FormInformation({handleCloseDialog}) {
                 }
             };
 
-            fetch(url_profile + public_id, requestOptions).then(res => res.json()).then(data => {
-                setUser(data);
-                setFullname(data.fullname);
-                setEmail(data.email);
-                //  if (data.status === "Expired token") {
+            fetch(url_user + operator_public_id, requestOptions).then(res => res.json()).then(data => {
+                if (data) {
+                    setPublicId(data.uuid || "");
+                    setUsername(data.username || "");
+                    setEmail(data.email || "");
+                }
             });
 
         } catch (error) {
-            alert(`Error ${error}`)
+            console.error(`Error fetching profile: ${error}`);
         }
     }, []);
 
-    const handleSubmit = (e) => {
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
 
+    const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         if (!loading) {
             setSuccess(false);
             setLoading(true);
@@ -75,108 +70,146 @@ export default function FormInformation({handleCloseDialog}) {
     };
 
     function validateForm() {
-        return !loading && fullname.length > 0 && email.length > 0;
+        return !loading && username.length > 0 && email.length > 0;
     }
 
     const postData = async () => {
-
         try {
+            const bodyData = {
+                "username": username,
+                "email": email
+            };
+            if (password && password.length > 0) {
+                bodyData.password = password;
+            }
+
             const requestOptions = {
-                method: 'POST',
-                headers: { 
+                method: 'PUT',
+                headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token
-                 },
-                body: JSON.stringify({
-                    "public_id": public_id,
-                    "fullname": fullname,
-                    "email": email
-                })
+                },
+                body: JSON.stringify(bodyData)
             };
 
-            const response = await fetch(url_update, requestOptions)
+            const response = await fetch(url_user + operator_public_id, requestOptions);
             var json = await response.json();
-            if (response.status === 200) {
+            if (response.ok) {
+                setSuccess(true);
+                setLoading(false);
+                setOpenBackdrop(false);
+                setOpen(true);
+                setMessage(json.message || "Profile updated successfully.");
+                
+                // Update username in cookie if updated successfully
+                document.cookie = `OPERATOR=${username}; path=/`;
 
-                if (json.status === 'success') {
-                    setSuccess(true);
-                    setLoading(false);
-                    setOpenBackdrop(false);
-                    setOpen(true);
-                    setMessage(json.message);
-                    //setAuth(true);
-                    //window.location.reload();
-                } else {
-                    setSuccess(false);
-                    setLoading(false);
-                    setOpenBackdrop(false);
-                    setOpen(true);
-                    //setAuth(false);
-                    setMessage(json.message);
-                }
+                window.setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             } else {
                 setSuccess(false);
                 setLoading(false);
                 setOpenBackdrop(false);
                 setOpen(true);
-                //setAuth(false);
-                setMessage(`Error ${response.status} ${response.statusText}`);
+                setMessage(json.message || "Some error occurred while updating profile.");
             }
         } catch (error) {
             setSuccess(false);
             setLoading(false);
             setOpenBackdrop(false);
             setOpen(true);
-            //setAuth(false);
             setMessage(`Error ${error}`);
         }
     };
 
-
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', minHeight: "30vh" }}>
+        <div style={{ padding: '8px 4px' }}>
             <form onSubmit={(e) => handleSubmit(e)}>
-          
-            <FormInput>
-                <Label>Public Id</Label>
-                <Entry>
-                    <TextField id="outlined-basic" variant="outlined" value={user?.public_id} disabled size="small" fullWidth />
-                </Entry>
-            </FormInput>
-            <FormInput>
-                <Label>Username</Label>
-                <Entry>
-                    <TextField id="outlined-basic" variant="outlined" value={user?.username} disabled size="small" fullWidth />
-                </Entry>
-            </FormInput>
-            <FormInput>
-                <Label>Full Name</Label>
-                <Entry>
-                    <TextField id="outlined-basic" variant="outlined" value={fullname} size="small" fullWidth onChange={e => setFullname(e.target.value)} />
-                </Entry>
-            </FormInput>
-            <FormInput>
-                <Label>Email</Label>
-                <Entry>
-                    <TextField id="outlined-basic" type="email" variant="outlined" value={email} size="small" fullWidth onChange={e => setEmail(e.target.value)} />
-                </Entry>
-            </FormInput>
-            
-            <Button type="submit"  disabled={!validateForm()} variant="contained" color="primary" fullWidth size="small">Update</Button>
-         
+                <div style={{ marginBottom: '16px' }}>
+                    <TextField 
+                        size="small" 
+                        fullWidth 
+                        label="Public Id" 
+                        variant="outlined" 
+                        value={publicId} 
+                        disabled 
+                    />
+                </div>
+                <div style={{ marginBottom: '16px' }}>
+                    <TextField 
+                        size="small" 
+                        fullWidth 
+                        label="Username" 
+                        variant="outlined" 
+                        value={username} 
+                        onChange={(e) => setUsername(e.target.value)} 
+                        required 
+                    />
+                </div>
+                <div style={{ marginBottom: '16px' }}>
+                    <TextField 
+                        size="small" 
+                        fullWidth 
+                        type="email"
+                        label="Email" 
+                        variant="outlined" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        required 
+                    />
+                </div>
+                <div style={{ marginBottom: '24px' }}>
+                    <TextField 
+                        size="small" 
+                        fullWidth 
+                        type="password"
+                        label="Password (Kosongkan jika tidak ingin diubah)" 
+                        variant="outlined" 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                    />
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px' }}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleCloseDialog}
+                        size="medium"
+                        style={{
+                            borderRadius: '100px',
+                            textTransform: 'none',
+                            fontFamily: "'Plus Jakarta Sans', sans-serif",
+                            fontWeight: 600
+                        }}
+                    >
+                        Batal
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<Save />}
+                        type="submit"
+                        disabled={!validateForm()}
+                        size="medium"
+                        style={{
+                            borderRadius: '100px',
+                            textTransform: 'none',
+                            background: validateForm() ? 'linear-gradient(135deg, var(--primary), var(--primary-light))' : undefined,
+                            fontFamily: "'Plus Jakarta Sans', sans-serif",
+                            fontWeight: 600
+                        }}
+                    >
+                        Simpan Perubahan
+                    </Button>
+                </div>
             </form>
-            <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleCloseDialog}
-                size="small"
-                style={{marginTop: "10px"}}
-            >
-                Cancel
-            </Button>
-            <Backdrop open={openBackdrop}  sx={{color: "#1976d2", backgroundColor: "rgba(255, 255, 255, 0.6)", zIndex:100}}>
+
+            <Backdrop open={openBackdrop} sx={{ color: "#1976d2", backgroundColor: "rgba(255, 255, 255, 0.6)", zIndex: 100 }}>
                 <CircularProgress color="inherit" />
             </Backdrop>
+
             <Snackbar open={open} autoHideDuration={8000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                 {success ?
                     <Alert onClose={handleClose} severity="success">
@@ -186,27 +219,6 @@ export default function FormInformation({handleCloseDialog}) {
                     <Alert onClose={handleClose} severity="error">{message}</Alert>
                 }
             </Snackbar>
-       
         </div>
-
-    )
+    );
 }
-
-
-const FormInput = styled.div`
-  margin:10px;
-  display: flex;
-`;
-
-const Label = styled.div`
-    width: 150px;
-`;
-const Entry = styled.div`
-    flex-grow: 1;
-    display: flex;
-`;
-
-const EntryMiddle = styled.div`
-    flex-grow: 1;
-    padding-right: 10px;
-`;
