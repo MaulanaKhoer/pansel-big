@@ -1,19 +1,25 @@
 version: '3.8'
 
 services:
+  # ============================================
+  # PostgreSQL Database
+  # ============================================
   db:
     image: postgres:15-alpine
     container_name: jpt_postgres
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-secretpassword}
-      POSTGRES_DB: ${DB_NAME:-db_pansel}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgre5}
+      POSTGRES_DB: ${DB_NAME:-db_pansel_new}
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  # ============================================
+  # Backend API (Node.js / Express)
+  # ============================================
   api:
     build: ./api_pansel
     container_name: jpt_api
@@ -24,15 +30,21 @@ services:
       - PORT=8080
       - DB_HOST=db
       - DB_USER=${DB_USER:-postgres}
-      - DB_PASSWORD=${DB_PASSWORD:-secretpassword}
-      - DB_NAME=${DB_NAME:-db_pansel}
+      - DB_PASSWORD=${DB_PASSWORD:-postgre5}
+      - DB_NAME=${DB_NAME:-db_pansel_new}
       - DB_PORT=5432
-      - JWT_SECRET=${JWT_SECRET:-rahasia_jwt_produksi_yang_kuat}
+      - JWT_SECRET=${JWT_SECRET:-rahasia_jpt_big_2026}
     depends_on:
       - db
 
+  # ============================================
+  # Landing Page (React → Nginx)
+  # ============================================
   landing_page:
-    build: ./landing_page
+    build:
+      context: ./landing_page
+      args:
+        API_URL: http://10.10.170.124:8080/api
     container_name: jpt_landing
     restart: always
     ports:
@@ -40,8 +52,14 @@ services:
     depends_on:
       - api
 
+  # ============================================
+  # Admin Dashboard (React → Nginx)
+  # ============================================
   pansel_admin:
-    build: ./pansel_admin
+    build:
+      context: ./pansel_admin
+      args:
+        API_URL: http://10.10.170.124:8080/api
     container_name: jpt_admin
     restart: always
     ports:
