@@ -22,7 +22,23 @@ app.use((req, res, next) => {
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-db.sequelize.sync();
+const syncDbWithRetry = (retries = 10, delay = 3000) => {
+  db.sequelize.sync()
+    .then(() => {
+      console.log("Database synchronized successfully.");
+    })
+    .catch((err) => {
+      if (retries > 0) {
+        console.log(`Database sync failed: ${err.message}. Retrying in ${delay/1000}s... (${retries} retries left)`);
+        setTimeout(() => syncDbWithRetry(retries - 1, delay), delay);
+      } else {
+        console.error("Database sync failed. No retries left. Exiting...");
+        process.exit(1);
+      }
+    });
+};
+
+syncDbWithRetry();
 //In development, you may need to drop existing tables and re-sync database.
 
 //Alter Tabel

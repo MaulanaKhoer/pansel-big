@@ -62,8 +62,6 @@ services:
         API_URL: https://pansel.big.go.id/api
     container_name: jpt_admin
     restart: always
-    ports:
-      - "81:80"
     depends_on:
       - api
 
