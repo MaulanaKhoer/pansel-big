@@ -36,61 +36,8 @@ const StyledTableRow = styled(TableRow)(() => ({
   "&:hover": { backgroundColor: "#e8eef8", transition: "background-color 0.2s ease" },
 }));
 
-/* ── Fallback static files list ── */
-const fallbackList = [
-  {
-    order_no: 1,
-    nama_berkas: "Daftar Riwayat Hidup",
-    nama_file: "Daftar Riwayat Hidup.docx",
-    tanggal_publikasi: "2026-07-10",
-    url_link: "https://docs.google.com/document/d/1b92_JQKO_ifCn5rQRrokM92ghh7uE7-J/export?format=docx"
-  },
-  {
-    order_no: 2,
-    nama_berkas: "Surat Keterangan Rekam Jejak Pengisian JPT Utama Kepala BIG",
-    nama_file: "Surat Keterangan Rekam Jejak Pengisian JPT Utama Kepala BIG.docx",
-    tanggal_publikasi: "2026-07-10",
-    url_link: "https://docs.google.com/document/d/1NRy5LBOJkQ_Kofl2wY52hlDuw1cyRrL9/export?format=docx"
-  },
-  {
-    order_no: 3,
-    nama_berkas: "Surat Rekomendasi Mengikuti Seleksi Terbuka JPT Utama Kepala BIG",
-    nama_file: "Surat Rekomendasi Mengikuti Seleksi Terbuka JPT Utama Kepala BIG.docx",
-    tanggal_publikasi: "2026-07-10",
-    url_link: "https://docs.google.com/document/d/1J7M2PpqjR8mKgmYIa_czN4QYTZCanI31/export?format=docx"
-  },
-  {
-    order_no: 4,
-    nama_berkas: "Surat Pernyataan Disiplin untuk Mengikuti Seleksi Terbuka",
-    nama_file: "Surat Pernyataan Disiplin untuk Mengikuti Seleksi Terbuka.docx",
-    tanggal_publikasi: "2026-07-10",
-    url_link: "https://docs.google.com/document/d/1j08tsvygIQfs_2IdZ9sR9P059LIkr-Rc/export?format=docx"
-  },
-  {
-    order_no: 5,
-    nama_berkas: "Surat Pernyataan Tidak Memiliki Afiliasi Dan Atau Menjadi Pengurus/ Anggota Partai Politik",
-    nama_file: "Surat Pernyataan Tidak Memiliki Afiliasi Dan Atau Menjadi Pengurus/ Anggota Partai Politik.docx",
-    tanggal_publikasi: "2026-07-10",
-    url_link: "https://docs.google.com/document/d/17zeURuKEHxio7VIl-XPrSxKf02oRKAOc/export?format=docx"
-  },
-  {
-    order_no: 6,
-    nama_berkas: "Pakta Integritas Mengikuti Seleksi Terbuka JPT Utama Kepala BIG",
-    nama_file: "Pakta Integritas Mengikuti Seleksi Terbuka JPT Utama Kepala BIG.docx",
-    tanggal_publikasi: "2026-07-10",
-    url_link: "https://docs.google.com/document/d/1-HPsIRvZuthfF6d8ERLB33TvrN3d8113/export?format=docx"
-  },
-  {
-    order_no: 7,
-    nama_berkas: "Surat Lamaran Mengikuti Seleksi Terbuka JPT Utama Kepala BIG",
-    nama_file: "Surat Lamaran Mengikuti Seleksi Terbuka JPT Utama Kepala BIG.docx",
-    tanggal_publikasi: "2026-07-10",
-    url_link: "https://docs.google.com/document/d/1iFcevBKIrqyBSJfvtXrx9nM-XTEed-3d/export?format=docx"
-  }
-];
-
 function Unduh() {
-  const [list, setList] = useState([]);
+  const [list, setList] = useState(null);
 
   useEffect(() => {
     fetch(Config.api_domain + "/unduh_berkas/active", {
@@ -100,19 +47,35 @@ function Unduh() {
       .then((res) => res.json())
       .then((data) => {
         const dataList = Array.isArray(data) ? data : (data.data || []);
-        if (dataList.length > 0) {
-          setList(dataList);
-        } else {
-          setList(fallbackList);
-        }
+        setList(dataList);
       })
       .catch((err) => {
         console.error("Error fetching unduh berkas:", err);
-        setList(fallbackList);
+        setList([]);
       });
   }, []);
 
   function getRows() {
+    if (!list) {
+      return (
+        <StyledTableRow>
+          <StyledTableCell colSpan={5} align="center" style={{ color: "#5a6a84", padding: "32px" }}>
+            Memuat data...
+          </StyledTableCell>
+        </StyledTableRow>
+      );
+    }
+
+    if (list.length === 0) {
+      return (
+        <StyledTableRow>
+          <StyledTableCell colSpan={5} align="center" style={{ color: "#5a6a84", padding: "32px" }}>
+            Berkas dokumen belum tersedia.
+          </StyledTableCell>
+        </StyledTableRow>
+      );
+    }
+
     return list.map((row, index) => {
       const orderNo = row.order_no || (index + 1);
       const formattedDate = row.tanggal_publikasi ? dateToStringDate(new Date(row.tanggal_publikasi)) : "-";
@@ -194,7 +157,6 @@ function Unduh() {
             </Table>
           </TableContainer>
         </div>
-      </div>
     </div>
   );
 }
