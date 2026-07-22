@@ -27,15 +27,13 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - PORT=8080
-      - DB_HOST=db
+      - PORT=${PORT:-8080}
+      - DB_HOST=${DB_HOST:-10.10.170.88}
       - DB_USER=${DB_USER:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-postgre5}
       - DB_NAME=${DB_NAME:-db_pansel_new}
-      - DB_PORT=5432
+      - DB_PORT=${DB_PORT:-5437}
       - JWT_SECRET=${JWT_SECRET:-rahasia_jpt_big_2026}
-    depends_on:
-      - db
 
   # ============================================
   # Landing Page (React → Nginx)
