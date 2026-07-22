@@ -46,7 +46,7 @@ services:
     container_name: jpt_landing
     restart: always
     ports:
-      - "80:80"
+      - "8081:80"
     depends_on:
       - api
 
