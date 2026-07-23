@@ -4,6 +4,7 @@ import Home from './components/Content/Home/Home';
 
 import Berkas from './components/Content/Berkas/Main';
 import BerkasAdd from './components/Content/Berkas/Add';
+import BerkasEdit from './components/Content/Berkas/Edit';
 import BerkasPreview from './components/Content/Berkas/Preview';
 
 import Pansel from './components/Content/Pansel/Main';
@@ -99,6 +100,9 @@ export default function MenuRouting() {
 
             <Route path="/berkas/add">
                 <BerkasAdd />
+            </Route>
+            <Route path="/berkas/edit/:dataId">
+                <BerkasEdit />
             </Route>
             <Route path="/berkas/preview/:dataId">
                 <BerkasPreview />

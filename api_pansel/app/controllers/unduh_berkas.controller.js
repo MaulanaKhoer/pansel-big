@@ -213,8 +213,13 @@ exports.view = (req, res) => {
       if (data && data.nama_file) {
         const filePath = path.join(__dirname, "../../uploads/unduh_berkas/", data.nama_file);
         if (fs.existsSync(filePath)) {
-          res.contentType("application/pdf");
-          res.sendFile(filePath);
+          const ext = path.extname(data.nama_file).toLowerCase();
+          if (ext === '.pdf') {
+            res.contentType("application/pdf");
+            res.sendFile(filePath);
+          } else {
+            res.download(filePath, (data.nama_berkas || "dokumen") + ext);
+          }
         } else {
           res.status(404).send({
             message: "Physical file does not exist on server."

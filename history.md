@@ -18,6 +18,13 @@ Dokumen ini mencatat semua perubahan, pemecahan masalah, dan penyesuaian yang te
   - Menghapus kolom header dan sel data "Nama File" pada tabel admin Pengumuman [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Pengumuman/Table.jsx).
   - Menghapus kolom header dan sel data "Nama File" pada tabel admin Berkas/Unduh [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Berkas/Table.jsx).
 
+### 3. Perbaikan Rute Edit Berkas & Penanganan View Dokumen Non-PDF
+- **Masalah Edit Berkas:** Saat mengeklik ikon Edit pada tabel Berkas (`/pansel-management/#/berkas/edit/:dataId`), halaman hanya memantul kembali (*redirect*) ke tabel utama karena path rute `/berkas/edit/:dataId` belum terdaftar di [MenuRouting.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/MenuRouting.jsx).
+- **Masalah View Dokumen:** Saat mengeklik ikon Lihat pada dokumen format Word (.docx / .doc), server secara paksa mengirimkan `Content-Type: application/pdf` sehingga viewer PDF browser gagal atau rusak.
+- **Solusi:**
+  - Mengimpor `BerkasEdit` dan mendaftarkan `<Route path="/berkas/edit/:dataId"><BerkasEdit /></Route>` pada [MenuRouting.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/MenuRouting.jsx).
+  - Memperbarui fungsi `exports.view` di [unduh_berkas.controller.js](file:///d:/BIG/pansel/seleksi-jpt-new/api_pansel/app/controllers/unduh_berkas.controller.js) dan [pengumuman.controller.js](file:///d:/BIG/pansel/seleksi-jpt-new/api_pansel/app/controllers/pengumuman.controller.js) agar memeriksa ekstensi berkas. Berkas `.pdf` dibuka secara inline di browser, sedangkan berkas non-PDF (`.docx`, `.doc`, dll) diunduh secara otomatis dengan nama berkas yang bersih.
+
 ---
 
 ## 22 Juli 2026 (Update 10)
