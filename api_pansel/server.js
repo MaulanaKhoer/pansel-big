@@ -11,7 +11,7 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 
 app.use((req, res, next) => {
   console.log(`[HTTP LOG] ${req.method} ${req.url} - Content-Type: ${req.headers['content-type']}`);
@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 });
 
 // parse requests of content-type - application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 const syncDbWithRetry = (retries = 10, delay = 3000) => {
   db.sequelize.sync()

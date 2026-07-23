@@ -2,6 +2,47 @@
 
 Dokumen ini mencatat semua perubahan, pemecahan masalah, dan penyesuaian yang telah dilakukan pada repositori **seleksi-jpt-new**.
 
+## 23 Juli 2026 (Update 11)
+
+### 1. Perbaikan Error `413 Request Entity Too Large` saat Pengunggahan File
+- **Masalah:** Saat mengunggah dokumen/berkas (misal file .docx/.pdf) di Admin Management (`/pansel-management/#/berkas/add`), muncul error `SyntaxError: Unexpected token '<', "<html> <h"... is not valid JSON` karena server mengembalikan respons HTML `413 Request Entity Too Large`.
+- **Penyebab:** Nginx (baik di Host Server maupun di dalam Docker Nginx) secara default membatasi ukuran request payload / file upload hingga 1MB (`client_max_body_size 1m`).
+- **Solusi:**
+  - Menambahkan `client_max_body_size 50M;` pada [landing_page/nginx.conf](file:///d:/BIG/pansel/seleksi-jpt-new/landing_page/nginx.conf) agar Nginx proxy di Docker mengizinkan upload berkas hingga 50MB.
+  - Memperbarui `express.json({ limit: "50mb" })` dan `express.urlencoded({ limit: "50mb", extended: true })` di [server.js](file:///d:/BIG/pansel/seleksi-jpt-new/api_pansel/server.js).
+
+---
+
+## 22 Juli 2026 (Update 10)
+
+### 1. Perbaikan Routing Subpath `pansel_admin` di Docker & Nginx
+- **Masalah:** Halaman dashboard `pansel_admin` tidak dapat diakses (menghasilkan error 404 pada berkas static HTML/JS/CSS).
+- **Solusi:**
+  - Mengubah properti `"homepage": "/pansel-management/"` pada [package.json](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/package.json).
+  - Mengubah direktori tujuan hasil build pada [Dockerfile](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/Dockerfile) menjadi `/usr/share/nginx/html/pansel-management` agar sesuai dengan lokasi pencarian Nginx.
+
+### 2. Penyelarasan Konfigurasi Database Eksternal (PostgreSQL)
+- **Masalah:** Backend `jpt_api` gagal terkoneksi ke server database eksternal `10.10.170.88:5437` dan mengunci ke kontainer lokal `db` yang kosong, sehingga memicu pesan error *"User Not found."* saat login operator.
+- **Solusi:**
+  - Memperbarui [docker-compose.yml](file:///d:/BIG/pansel/seleksi-jpt-new/docker-compose.yml) untuk membaca variabel `DB_HOST=${DB_HOST:-10.10.170.88}` dan `DB_PORT=${DB_PORT:-5437}` secara dinamis.
+  - Menghapus ketergantungan `depends_on: - db` agar backend terhubung ke PostgreSQL server publik di IP `10.10.170.88`.
+
+### 3. Pemisahan Multi-Domain Nginx (`pansel.big.go.id` & `casn.big.go.id`)
+- **Masalah:** Domain `casn.big.go.id` ikut mengarah ke aplikasi `pansel.big.go.id` karena kontainer Nginx publik mengunci port `80:80`.
+- **Solusi:**
+  - Mengubah port binding `jpt_landing` pada [docker-compose.yml](file:///d:/BIG/pansel/seleksi-jpt-new/docker-compose.yml) menjadi `8081:80`.
+  - Mengubah `server_name` pada [landing_page/nginx.conf](file:///d:/BIG/pansel/seleksi-jpt-new/landing_page/nginx.conf) menjadi `pansel.big.go.id localhost`.
+  - Menyediakan berkas HTML interaktif khusus untuk pengadaan CASN BIG dengan pesan *"Saat ini BIG belum membuka penerimaan pegawai baru"*.
+
+### 4. Pembersihan Dummy Data & Perbaikan Sintaks Halaman Unduh
+- **Masalah:** Halaman Unduh ([Unduh.js](file:///d:/BIG/pansel/seleksi-jpt-new/landing_page/src/components/Unduh.js)) menampilkan 7 berkas dummy saat data unduhan kosong di database, serta terdapat error sintaks JSX `Unterminated JSX contents` saat build.
+- **Solusi:**
+  - Menghapus objek `fallbackList` dummy di [Unduh.js](file:///d:/BIG/pansel/seleksi-jpt-new/landing_page/src/components/Unduh.js) dan menampilkan pesan empty-state *"Berkas dokumen belum tersedia."*.
+  - Memperbaiki tag penutup `</div>` JSX yang hilang sehingga proses kompilasi React `npm run build` sukses.
+
+### 5. Dokumentasi Repositori (README.md)
+- Membuat dokumentasi lengkap skema 8 tabel database (`users`, `formasis`, `pengumumen`, `jadwals`, `tahapans`, `unduh_berkas`, `daftar_steps`, `web_configs`), daftar endpoint REST API, arsitektur port, dan panduan deployment pada [README.md](file:///d:/BIG/pansel/seleksi-jpt-new/README.md).
+
 ---
 
 ## 16 Juli 2026 (Update 9)
