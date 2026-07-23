@@ -59,7 +59,7 @@ function Unduh() {
     if (!list) {
       return (
         <StyledTableRow>
-          <StyledTableCell colSpan={5} align="center" style={{ color: "#5a6a84", padding: "32px" }}>
+          <StyledTableCell colSpan={4} align="center" style={{ color: "#5a6a84", padding: "32px" }}>
             Memuat data...
           </StyledTableCell>
         </StyledTableRow>
@@ -69,7 +69,7 @@ function Unduh() {
     if (list.length === 0) {
       return (
         <StyledTableRow>
-          <StyledTableCell colSpan={5} align="center" style={{ color: "#5a6a84", padding: "32px" }}>
+          <StyledTableCell colSpan={4} align="center" style={{ color: "#5a6a84", padding: "32px" }}>
             Berkas dokumen belum tersedia.
           </StyledTableCell>
         </StyledTableRow>
@@ -90,7 +90,6 @@ function Unduh() {
         <StyledTableRow key={row.uuid || index}>
           <StyledTableCell align="center" style={{ fontWeight: 700, color: "#1a3a6b" }}>{orderNo}</StyledTableCell>
           <StyledTableCell style={{ fontWeight: 600 }}>{row.nama_berkas}</StyledTableCell>
-          <StyledTableCell style={{ color: "#5a6a84" }}>{row.nama_file || "-"}</StyledTableCell>
           <StyledTableCell style={{ color: "#5a6a84", whiteSpace: "nowrap" }}>{formattedDate}</StyledTableCell>
           <StyledTableCell align="center">
             <a
@@ -148,7 +147,6 @@ function Unduh() {
                 <TableRow>
                   <StyledTableCell align="center" style={{ width: "60px" }}>No</StyledTableCell>
                   <StyledTableCell>Nama Berkas</StyledTableCell>
-                  <StyledTableCell>Nama File</StyledTableCell>
                   <StyledTableCell>Tanggal Publikasi</StyledTableCell>
                   <StyledTableCell align="center">Unduh</StyledTableCell>
                 </TableRow>

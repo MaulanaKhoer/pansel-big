@@ -11,6 +11,13 @@ Dokumen ini mencatat semua perubahan, pemecahan masalah, dan penyesuaian yang te
   - Menambahkan `client_max_body_size 50M;` pada [landing_page/nginx.conf](file:///d:/BIG/pansel/seleksi-jpt-new/landing_page/nginx.conf) agar Nginx proxy di Docker mengizinkan upload berkas hingga 50MB.
   - Memperbarui `express.json({ limit: "50mb" })` dan `express.urlencoded({ limit: "50mb", extended: true })` di [server.js](file:///d:/BIG/pansel/seleksi-jpt-new/api_pansel/server.js).
 
+### 2. Penghapusan Kolom "Nama File" pada Tabel Frontend & Admin
+- **Permintaan:** Menghilangkan kolom "Nama File" yang menampilkan string acak nama file internal backend agar tabel tampil lebih rapi dan bersih.
+- **Solusi:**
+  - Menghapus kolom header dan sel data "Nama File" pada tabel publik [Unduh.js](file:///d:/BIG/pansel/seleksi-jpt-new/landing_page/src/components/Unduh.js).
+  - Menghapus kolom header dan sel data "Nama File" pada tabel admin Pengumuman [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Pengumuman/Table.jsx).
+  - Menghapus kolom header dan sel data "Nama File" pada tabel admin Berkas/Unduh [Table.jsx](file:///d:/BIG/pansel/seleksi-jpt-new/pansel_admin/src/components/Content/Berkas/Table.jsx).
+
 ---
 
 ## 22 Juli 2026 (Update 10)

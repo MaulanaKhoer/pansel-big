@@ -156,7 +156,6 @@ export default function GazetteerTable() {
                 <StyledTableCell component="th" scope="row">
                   {judul || '-'}
                 </StyledTableCell>
-                <StyledTableCell style={{ wordBreak: 'break-all' }}>{file_url || '-'}</StyledTableCell>
                 <StyledTableCell>{formatted_datetime}</StyledTableCell>
                 <StyledTableCell>{status ? 'Aktif' : 'Tidak Aktif'}</StyledTableCell>
                 <StyledTableCell>
@@ -176,7 +175,7 @@ export default function GazetteerTable() {
         } else {
           return (
             <StyledTableRow >
-              <StyledTableCell component="th" scope="row" colspan="7">
+              <StyledTableCell component="th" scope="row" colSpan={5} align="center">
                 No data found.
               </StyledTableCell>
             </StyledTableRow>
@@ -204,7 +203,6 @@ export default function GazetteerTable() {
           <TableRow>
             <StyledTableCell align="center" style={{ width: '60px' }}>No</StyledTableCell>
             <StyledTableCell>Judul</StyledTableCell>
-            <StyledTableCell>Nama File</StyledTableCell>
             <StyledTableCell>Tanggal Publikasi</StyledTableCell>
             <StyledTableCell>Status</StyledTableCell>
             <StyledTableCell>Aksi</StyledTableCell>

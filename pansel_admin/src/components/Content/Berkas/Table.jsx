@@ -102,7 +102,6 @@ export default function BerkasTable() {
               <StyledTableCell component="th" scope="row" style={{ fontWeight: 600 }}>
                 {namaBerkas || '-'}
               </StyledTableCell>
-              <StyledTableCell style={{ wordBreak: 'break-all' }}>{namaFile || '-'}</StyledTableCell>
               <StyledTableCell>{tglPublikasi}</StyledTableCell>
               <StyledTableCell>{status ? 'Aktif' : 'Tidak Aktif'}</StyledTableCell>
               <StyledTableCell>
@@ -122,7 +121,7 @@ export default function BerkasTable() {
       } else {
         return (
           <StyledTableRow>
-            <StyledTableCell component="th" scope="row" colSpan="6" align="center">
+            <StyledTableCell component="th" scope="row" colSpan="5" align="center">
               No data found.
             </StyledTableCell>
           </StyledTableRow>
@@ -141,7 +140,6 @@ export default function BerkasTable() {
             <TableRow>
               <StyledTableCell align="center" style={{ width: '60px' }}>No</StyledTableCell>
               <StyledTableCell>Nama Berkas</StyledTableCell>
-              <StyledTableCell>Nama File</StyledTableCell>
               <StyledTableCell>Tanggal Publikasi</StyledTableCell>
               <StyledTableCell style={{ width: '120px' }}>Status</StyledTableCell>
               <StyledTableCell style={{ width: '150px' }}>Aksi</StyledTableCell>
