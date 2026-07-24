@@ -356,7 +356,7 @@ function Tahapan() {
           </div>
           <h1 style={styles.h1}>Tahapan Seleksi</h1>
           <p style={styles.subtitle}>
-            Seleksi Jabatan Pimpinan Tinggi Pratama — Badan Informasi Geospasial
+            Seleksi Jabatan Pimpinan Tinggi — Badan Informasi Geospasial
           </p>
         </div>
       </div>

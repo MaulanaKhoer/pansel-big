@@ -87,7 +87,7 @@ function Formasi() {
             Formasi Jabatan
           </h1>
           <p style={{ color: "rgba(255,255,255,0.7)", fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "15px", marginTop: "8px" }}>
-            Seleksi Jabatan Pimpinan Tinggi Pratama — Badan Informasi Geospasial
+            Seleksi Jabatan Pimpinan Tinggi — Badan Informasi Geospasial
           </p>
         </div>
       </div>
